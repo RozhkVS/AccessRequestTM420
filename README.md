@@ -21,7 +21,7 @@ GitHub требует токен вместо пароля для приватн
 Скопируй токен — он будет использоваться вместо пароля.
 
 3️⃣ Клонирование репозитория
-git clone https://github.com/RozhkVS/AccessRequestTM42.git
+git clone https://github.com/RozhkVS/AccessRequestTM420.git
 cd AccessRequestTM42
 
 
