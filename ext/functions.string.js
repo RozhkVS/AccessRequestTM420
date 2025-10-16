@@ -1,0 +1,51 @@
+// String Functions --------------------------------
+
+sprintf = function(t){
+	var ar = arguments;
+	var i=1,inx = t.indexOf("%s");
+	while(inx>=0){
+		t = t.substr(0, inx) + ar[i++] + t.substr(inx+2);
+		inx = t.indexOf("%s");
+	}
+	return t;
+};
+strRepeat = function(s,n) {
+	if(!s) return '';
+	var i,a=[];
+	for(i=1;i<=n;i++){
+		a[a.length]=s;
+	}
+	return a.join('');
+};
+strReverse = function(s) {
+	if(!s) return '';
+	var a=(s+'').split('');
+	a.reverse();
+	return a.join('');
+};
+strStuff = function(s,v,index) {
+	if(!s) return '';
+	if (index==null) s=s+v+'';
+	else {
+		var t1=t2=s+'';
+		s=t1.substr(0,index)+v+t2.substr(index,t2.length-index);
+	}
+	return s;
+};
+// string.prototype.trim = function(){
+// 	var str = this.replace(/~\s+/,""),
+// 	end = str.length - 1,
+// 	ws = /\s/;
+// 	while (ws.test(str.charAt(end))){
+// 		end--;
+// 	}
+// 	return str.slice(0,end + 1);
+// }
+trim = function(s,dir){
+	if(!s) return;
+	else s+=''; // make sure s is a string
+	dir=(dir)? dir:'<>';
+	if(dir=='<'||dir=='<>') s=s.replace(/^(\s+)/g,'');
+	if(dir=='>'||dir=='<>') s=s.replace(/(\s+)$/g,'');
+	return s;
+};

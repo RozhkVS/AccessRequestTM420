@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>iGrid beta Разработка и обкатка функционала</title>
+      <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=windows-1251">
+      <meta http-equiv="X-UA-Compatible" content="IE=11">
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+      <meta http-equiv="Pragma" content="no-cache"/>
+      <script src="http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/vendor/jquery.min.js"></script>
+      <script src="http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/iLib.js"></script>
+      <script src="PerformerResolve.js"></script>
+      <link rel="stylesheet" type="text/css" href="http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/css/iGrid.css" />
+      <script type="text/javascript">
+          function init(){
+              domReady(createView());
+          }
+      </script>
+      <style TYPE="TEXT/CSS">
+        html{
+          -ms-content-zooming: none;
+        }
+        body {
+          margin: 0px;
+          padding: 0px;
+          border:0px;
+          width:100%;
+          height:100%;
+          background: #FEFEFE;
+          font-family:Segoe UI;
+          font-size:12px;
+          line-height:100%;
+          overflow-x: hidden;
+          overflow-y: hidden;
+        }
+      </style>
+  </head>
+  <body>
+    <div data-dlgwin-options='{"title":"Причина відхилення","width":"350","height":"150","showOnStart":false}' id="textbox"></div>
+    <div id="test"></div>
+    <script type="text/javascript">
+      var  buttons = [
+             {id: "btnExpand",  name: "Развернуть", bimage: "http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/css/images/expand.gif", hidename: true, tooltip: "Развернуть все", onpress: function(){if(myGrid.grid[0].rows.length)myGrid.grid.treetable("expandAll");}}
+            ,{id: "btnCollapse",  name: "Свернуть", bimage: "http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/css/images/collapse.gif", hidename: true, tooltip: "Свернуть все", onpress: function(){if(myGrid.grid[0].rows.length)myGrid.grid.treetable("collapseAll")}}
+            ,{separator: true}
+            ,{id: "btnAccept",  name: "Узгодити все", bimage: "http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/images/accept_all.gif", hidename: false, onpress: function(){acceptAll();}}
+            ,{id: "btnReject",  name: "Вiдхiлити все", bimage: "http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/images/reject_all.gif", hidename: false, onpress: function(){rejectAll();}}
+            ,{id: "btnUnselect",  name: "Зняти всi", bimage: "http://tz-dir-web.atbmarket.com:80/JS/third-party/iLib/images/unselect_all.gif", hidename: false, onpress: function(){unselectAll();}}
+          ]
+          ,listData = []
+          ,modelName
+          ,fullDataModel
+          ,myGrid
+          ,textbox
+          ,pRes;
+      function CellCheckClick(){
+        var state;
+        if(this.fieldName == "Accept" || this.fieldName == "Reject"){
+          if(this.fieldName == "Accept"){
+            state = this.row.find("td[abbr=\"Reject\"] span").hasClass("checked");
+            if(this.ckecked && this.ckecked == state)
+              this.row.find("td[abbr=\"Reject\"] span").toggleClass("checked");
+          }
+          else{
+            state = this.row.find("td[abbr=\"Accept\"] span").hasClass("checked");
+            if(this.ckecked && this.ckecked == state)
+              this.row.find("td[abbr=\"Accept\"] span").toggleClass("checked");
+          }
+          if(this.ckecked){
+            if(this.fieldName == "Accept"){
+              pRes.resolve(this.id).resolution = true
+              if(modelName == "Agreement"){
+                this.row.find("td[abbr=\"btnComment\"] div").css("display","none");
+                this.row.find("td:eq(11) div").text("");
+              }
+            }
+            else {
+              pRes.resolve(this.id).resolution = false;
+              if(modelName == "Agreement")
+                this.row.find("td[abbr=\"btnComment\"] div").css("display","");
+            }
+          }
+          else{
+            if(modelName == "Agreement"){
+              this.row.find("td[abbr=\"btnComment\"] div").css("display","none");
+              this.row.find("td:eq(11) div").text("");
+            }
+            pRes.resolve(this.id).resolution = undefined;
+          }
+        }
+      }
+      //нажатие кнопки в окне dlgWindow
+      var onBtnClick = function(){
+        var cell
+          ,row_id = this.rowId
+          ,node = myGrid.grid.treetable("node",row_id)
+          ,strOutput = String();
+          strOutput = textbox.text;
+          cell = node.row.find("td:eq(11) div");
+          cell.text(strOutput);
+          pRes.resolve(this.rowId).comment = strOutput;
+      }
+      function CellDoneClick(){
+        if(this.fieldName == "Resolution"){
+          if(this.ckecked)
+            this.row.find("td[abbr=\"btnComment\"] div").css("display","")
+          else
+            this.row.find("td[abbr=\"btnComment\"] div").css("display","none");
+        }
+      }
+      function onCellBtnClick(){
+        var $row = $("#test .divBody table").treetable("node",this.id),
+          $cell = $row.row.find("td:eq(11)"),
+          text = $cell.text();
+        textbox.addData(text,this.id);
+        textbox.dialogShow();
+      }
+      var dataChange = function(){
+         //alert("ComponentID: " + this.id + "\nresolution: " + this.value + "\ncomment: " + this.comment);
+      }
+      var createView = function(){
+        textbox = new dlgWindow(document.getElementById("textbox"),{"contentType":"textbox","isDrag":false,"onButtonClick": onBtnClick,"height":150,"width":350}).init();
+        // var modelName = window.external.Form.View.Component.Requisites("StageType").Value;
+        modelName = 'Done';
+        obj = {checkable : false};
+        obj.colModel = viewModel[modelName];
+        obj.buttons = buttons;
+        //var cardData = window.external.Form.View.Component.Requisites("Params").Value,
+        //    request_id = window.external.Form.View.Component.Requisites("RequestID").AsInteger.
+        //    user_id = window.external.Form.View.Component.Requisites("UserID").AsInteger.
+        //    stage_number = window.external.Form.View.Component.Requisites("StageNumber").AsInteger;
+        var cardData = '[{"ResolveID":107,"ComponentID":16519600,"ComponentName":"Пакет","InfSysID":14431470,"InfSysName":"Маркет 3","GroupID":16507077,"GroupName":"Документы. Службы ИТ","AccessTypes":"Додавання; Зміна"},{"ResolveID":110,"ComponentID":16519700,"ComponentName":"Preview2","InfSysID":14431484,"InfSysName":"Бухучет ДФК"},{"ResolveID":113,"ComponentID":16519633,"ComponentName":"Компонент доступа WMS Manhattan","InfSysID":14431473,"InfSysName":"WMS Manhattan","AccessTypes":"Документы кладовщика; Документы руководителя"},{"ResolveID":116,"ComponentID":16519629,"ComponentName":"Концелярия","InfSysID":14431586,"InfSysName":"Электронный документооборот (СЭД)","AccessTypes":"Перегляд; Змiна; Повний"}]'
+            request_id = 16519802,
+            user_id = 166917,
+            stage_number = 1,
+            stage_type = modelName;
+        if((modelName == 'Agreement') || (modelName == 'Done')){
+          pRes = new resolveMakeup({"request_id":request_id,"user_id":user_id,"stage_number":stage_number}).init(JSON.parse(cardData));
+          pRes.onResolutionChange = dataChange;
+          pRes.onCommentChange = dataChange;
+        }
+        if(cardData){
+          fullDataModel =  JSON.parse(cardData);
+          obj.dataModel = fullDataModel;
+        }
+        else{
+          fullDataModel = getJSData();
+          obj.dataModel = [fullDataModel[1]];
+        }
+        obj.groupModel = [];
+        if((modelName == 'Agreement') || (modelName == 'Done'))
+          obj.onCellCheckClick = CellCheckClick;
+
+        obj.groupModel = [
+          {groupIndx: "InfSysID", dataIndx:"InfSysName",groupTitle:""}
+           ,{groupIndx: "GroupID", dataIndx:"GroupName",groupTitle:""}
+          ];
+        obj.groupKey = "ComponentID";
+        obj.groupField = "ComponentName";
+        obj.onCellButtonClick = onCellBtnClick;
+        myGrid = new Grid(document.getElementById("test"), obj).init();
+        if(!cardData){
+          myGrid.clearTable();
+          fullDataModel = [];
+        }
+        $("#test").toolBar({buttons:obj.buttons,visible:true});
+          var get = "getElementById",
+              tab = document[get]("test"),
+              divBody = $(".igrid .divBody")[0],
+              body = $(".igrid .divBody table")[0],
+              head = $(".igrid .divHead table")[0];
+          window.resizeGrid = function() {
+          var width = window.innerWidth;
+          var height = window.innerHeight;
+          var th = height - divBody.offsetTop;
+          tab.style.width = width + "px";
+          tab.style.height = height + "px";
+          setTimeout(function() {
+            divBody.style.width = width + "px";
+            divBody.style.height = th + "px";
+            body.style.width = divBody.clientWidth + "px";
+            head.style.width = divBody.clientWidth + "px";
+          }, 100);
+        }
+        $(".igrid").width(window.innerWidth);
+        $(".igrid").height(window.innerHeight);
+        if ($("#test").iGrid("flat")){
+          var rz = resizilla(resizeGrid, 400);
+          resizeGrid();
+        }
+        setTimeout(function() {
+          myGrid.header.css("display","");
+          myGrid.grid.css("display","");
+          //window.external.Form.View.Component.setVisible();
+        },100);
+        if(modelName == "Agreement"){
+          myGrid.grid.find("tr.branch").each(function(i,e){
+            $(e.cells[9]).find("span.checkaccept").css("display","none");
+            $(e.cells[10]).find("span.checkaccept").css("display","none");
+          });
+          myGrid.grid.find("tr.leaf").each(function(i,e){
+            $(e.cells[9]).find("span.checkaccept").trigger("click");
+          });
+        }
+        if(modelName == "Done"){
+          myGrid.grid.find("tr.branch").each(function(i,e){
+            $(e.cells[10]).find("span.checkaccept").css("display","none");
+            $(e.cells[11]).find("span.checkaccept").css("display","none");
+          });
+        }
+      }
+      function acceptAll(){
+        myGrid.grid.find("tr.leaf").each(function(i,e){
+          var state = $(e.cells[9]).find("span.checkaccept").hasClass("checked");
+          if(!state)
+            $(e.cells[9]).find("span.checkaccept").trigger('click');
+        });
+      }
+      function rejectAll(){
+        myGrid.grid.find("tr.leaf").each(function(i,e){
+          var state = $(e.cells[10]).find("span.checkaccept").hasClass("checked");
+          if(!state)
+            $(e.cells[10]).find("span.checkaccept").trigger('click');
+        });
+      }
+     function unselectAll(){
+        myGrid.grid.find("tr.leaf").each(function(i,e){
+          var state = $(e.cells[10]).find("span.checkaccept").hasClass("checked");
+          if(state)
+            $(e.cells[10]).find("span.checkaccept").trigger('click');
+          state = $(e.cells[9]).find("span.checkaccept").hasClass("checked");
+          if(state)
+            $(e.cells[9]).find("span.checkaccept").trigger('click');
+        });
+      }
+    </script>
+  </body>
+</html>

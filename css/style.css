@@ -1,0 +1,69 @@
+body, td {
+    color: black;
+    font-family: Helvetica;
+    font-size: 10pt;
+}
+
+th {
+    color: navy;
+    font-family: Helvetica;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+h1 {
+    color: navy;
+    font-family: Helvetica;
+    font-size: 14pt;
+}
+
+h2 {
+    color: navy;
+    font-family: Helvetica;
+    font-size: 12pt;
+}
+
+h3 {
+    color: navy;
+    font-family: Helvetica;
+    font-size: 10pt;
+}
+
+h4 {
+    color: black;
+    font-family: Helvetica;
+    font-size: 10pt;
+}
+
+p {
+    text-indent: 20pt;
+}
+
+a {
+    color: navy;
+    text-decoration: none;
+}
+
+li {
+	margin-top: 3pt;
+	margin-bottom: 3pt;
+}
+
+a:hover {
+    color: #4169e1;
+}
+
+.subTitle {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.nested {
+	margin-left: 36pt;
+	margin-bottom: 12pt;
+}
+.warning {
+	color:red;
+	font-weight: bold;
+	font-size: 11pt;
+}

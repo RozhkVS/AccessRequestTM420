@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Проэкт Заявки на доступ Интерфейс согласующего/исполнителя</title>
+    <meta name="Author" content="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta http-equiv="Content-Type" content="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="dialogWindow.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ITreeGrid.css">
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+    <script src="ILIB.js"></script>
+    <script src="PerformerResolve.js"></script>
+    <script src="toolbar.js"></script>
+  </head>
+  <body>
+    <div data-dlgwin-options='{"title":"Причина відхилення","width":"350","height":"150","showOnStart":false,"readOnly":true}' id="textbox"></div>
+    <div id="menu" class="tool-menu"></div>
+    <script>
+      var MainMenu,TreeGrid,modelName,userColumnModel,buttons,pRes,prData = [];
+      var textbox = new dlgWindow(document.getElementById("textbox"),{"contentType":"textbox","sizeLinit":1024,"isDrag":false,"onButtonClick": onBtnClick,"height":150,"width":350}).init();
+      iEvents.addHandler(window,"load",function(event){
+        modelName = admUI.Requisites("StageType").Value;
+        userColumnModel = viewModel[modelName];
+        buttons = vModel[modelName];
+        createTreeView();
+        createView();
+      });
+      var tvExpandAll = function(){
+        TreeGrid.expandAll();
+      };
+      var tvCollapseAll = function(){
+        TreeGrid.collapseAll();
+      };
+      var tvCellButtonClick = function(event){
+         var row = event.row,
+             fieldIndex = event.fieldIndex,
+             btnIndex = (modelName=='Agreement') ? 5 : 6,
+             rowId = row.dataset.rowId,
+             cell = row.cells[fieldIndex],
+             text = cell.innerText;
+        textbox.addData(text,rowId,fieldIndex);
+        if(textbox.fieldIndex == (row.cells.length - 1))
+          textbox.$content.find('textarea')[0].readOnly = false
+        else textbox.$content.find('textarea')[0].readOnly = true;
+        document.trace('fieldIndex: ' + (row.cells.length - 1));
+        textbox.dialogShow();
+      }
+      var renderComponentsView = function(){
+        this.height = window.innerHeight - this.top;
+        this.width = window.innerWidth;
+        if(this.children.length == 1){
+          this.children[0].width = this.width;
+          this.children[0].height = this.height;
+        }
+      };
+      var gridSelectChanged = function(event){
+        return true;
+      };
+      var getData = function(){
+        var data,result = new String(),rs;
+        try{
+          rs = admUI.Execute();
+          if(rs.Active){
+            while(!rs.EOF){
+              result += rs.FieldByIndex(0).Value
+              rs.Next();
+            }
+            rs.Close;
+          }
+        }
+        catch(err){
+          alert(err.message);
+        }
+        // document.trace(result)
+        return result.length ? JSON.parse(result) : undefined;
+      }
+      function changeValue(event){
+        var accept = false, reject = false, fieldIndex = event.fieldIndex, row = event.row, rowId = row.dataset.rowId,
+            btnIndex = (modelName=='Agreement') ? 5 : 6, btn = row.cells[btnIndex].querySelector('img'), desc = row.cells[btnIndex].querySelector('span'),
+            aFieldChecker = row.cells[2].querySelector('input'), rFieldChecker = row.cells[3].querySelector('input');
+        if(fieldIndex==3){
+          if(event.value){
+            btn.parentNode.style.display = '';
+            aFieldChecker.checked = false;
+            reject = true;
+          }
+          else{
+            desc.innerText = '';
+            btn.parentNode.style.display = '';
+          }
+        }
+        else{
+          if(event.value){
+            rFieldChecker.checked = false;
+            btn.parentNode.style.display = '';
+            accept = true;
+          }
+        }
+        if(accept)
+          pRes.resolve(rowId).resolution = true
+        else if(reject)
+          pRes.resolve(rowId).resolution = false
+        else
+          pRes.resolve(rowId).resolution = undefined;
+      }
+      function onBtnClick(){
+        // document.trace('onBtnClick');
+        var row = TreeGrid.treeView.tree[this.rowId].row, rowId = row.dataset.rowId,
+            btnIndex = (modelName=='Agreement') ? 5 : 6,
+            cell = row.cells[textbox.fieldIndex],
+            desc = cell.querySelector('span'),strOutput = String();
+        strOutput = textbox.text;
+        if(textbox.fieldIndex == btnIndex){
+            desc.title = desc.innerText = strOutput;
+            pRes.resolve(rowId).comment = strOutput;
+        }
+
+      }
+      function createTreeView(){
+        // var data = getData();
+        var TreeView = new icgLayout();
+        TreeView.top = 31;
+        TreeView.left = 1;
+        TreeView.height = window.innerHeight - TreeView.top;
+        TreeView.width = window.innerWidth;
+        TreeView.layoutInit(/*'horizontal'*/);
+        TreeView.css.backgroundColor = '#F7F7F7';
+        TreeView.render = renderComponentsView;
+        var gbTreeView = new icgGroupBox({parent:TreeView,left:0,top:0,width:TreeView.width,height:TreeView.height,caption:''});
+        gbTreeView.font.bold =true;
+        TreeGrid = new iTreeGrid({parent:gbTreeView,top:0,left:0,columnModel:userColumnModel,callback:gridSelectChanged});
+        TreeGrid.CellValueChange = changeValue;
+        TreeGrid.CellButtonClick = tvCellButtonClick;
+        $("#menu").toolBar({buttons:buttons,visible:true});
+        TreeView.render();
+      }
+      function dataLoad(){
+        var needToLoad = TreeGrid.needToAsyncLoad.reverse(),len  = needToLoad.length;
+        for(var i=0;i<len;i++){
+          var curRootId = needToLoad.pop();
+          if(curRootId) TreeGrid.loadChildrenRows(curRootId);
+        }
+        TreeGrid.expandAll();
+      }
+      function refereshView(){
+        var res,data = getData();
+        if(data){
+          TreeGrid.dataSet = data;
+          for(var i=0,len=data.length;i<len;i++){
+            if(data[i].ItemType=='component'){
+              // document.trace(JSON.stringify(data[i]))
+              prData.push(data[i]);
+            }
+          }
+        }
+        TreeGrid.InitFunction = getData;
+        TreeGrid.Init();//запуск по умолчанию, загрузку данных осуществляет форма карточки
+        if(TreeGrid.needToAsyncLoad.length){
+          dataLoad();
+        }
+      }
+      function resolveChange(){
+        var value = undefined;
+        if(this.value !== undefined){
+          if(this.value)
+            value = 1
+          else
+            value = 0;
+        }
+        if(value !== undefined){
+          admUI.updateResolve(this.id,value,this.comment)
+        }
+        else
+          admUI.clearResolve(this.id);
+      }
+      function acceptAll(){
+        var i,aFieldChecker,rFieldChecker,len = TreeGrid.treeView.nodes.length;
+        for(i=0;i<len;i++){
+          if(TreeGrid.treeView.nodes[i].row.dataset.itemType=='component'){
+            aFieldChecker = TreeGrid.treeView.nodes[i].row.cells[2].querySelector('input');
+            rFieldChecker = TreeGrid.treeView.nodes[i].row.cells[3].querySelector('input');
+            if(aFieldChecker.checked)aFieldChecker.click();
+            if(rFieldChecker.checked)rFieldChecker.click();
+            aFieldChecker.click();
+          }
+        }
+      }
+      function rejectAll(){
+        var i,aFieldChecker,rFieldChecker,len = TreeGrid.treeView.nodes.length;
+        for(i=0;i<len;i++){
+          if(TreeGrid.treeView.nodes[i].row.dataset.itemType=='component'){
+            aFieldChecker = TreeGrid.treeView.nodes[i].row.cells[2].querySelector('input');
+            rFieldChecker = TreeGrid.treeView.nodes[i].row.cells[3].querySelector('input');
+            if(aFieldChecker.checked)aFieldChecker.click();
+            if(rFieldChecker.checked)rFieldChecker.click();
+            rFieldChecker.click();
+          }
+        }
+      }
+      function unselectAll(){
+        var i,len = TreeGrid.treeView.nodes.length, aFieldChecker, rFieldChecker;
+        for(i=0;i<len;i++){
+          if(TreeGrid.treeView.nodes[i].row.dataset.itemType=='component'){
+            aFieldChecker = TreeGrid.treeView.nodes[i].row.cells[2].querySelector('input');
+            rFieldChecker = TreeGrid.treeView.nodes[i].row.cells[3].querySelector('input');
+            if(aFieldChecker.checked)
+              aFieldChecker.click();
+            if(rFieldChecker.checked)
+              rFieldChecker.click();
+          }
+        }
+      }
+      function createView(){
+        refereshView();
+        var request_id = admUI.Requisites("RequestID").AsInteger,
+            user_id = admUI.Requisites("UserID").AsInteger,
+            stage_number = admUI.Requisites("StageNumber").AsInteger;
+        pRes = new resolveMakeup({"request_id":request_id,"user_id":user_id,"stage_number":stage_number}).init(prData);
+        pRes.onResolutionChange = resolveChange;
+        pRes.onCommentChange = resolveChange;
+        if(modelName == "Agreement"){
+          var i,len = TreeGrid.treeView.nodes.length;
+          for(i=0;i<len;i++){
+            if(TreeGrid.treeView.nodes[i].row.dataset.itemType=='component')
+              TreeGrid.treeView.nodes[i].row.cells[2].querySelector('input').click();
+          }
+        }
+      };
+      // iEvents.addHandler(document, "keydown", function(e){
+      //   // iEvents.preventDefault(e);
+      //   if(e.ctrlKey && e.keyCode == 70){
+      //     //alert('CTRL+F Detected!');
+      //     iEvents.preventDefault(e);
+      //     return false;
+      //   }
+      // });
+    </script>
+  </body>
+</html>

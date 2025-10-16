@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Проэкт Заявка на доступ Выбор компонентов доступа</title>
+    <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="dialogWindow.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+  </head>
+  <body>
+    <div data-dlgwin-options='{"title":"Типи доступiв","width":"150","height":"100","showOnStart":false}' id="checklist"></div>
+    <div data-dlgwin-options='{"title":"Обгрунтування","width":"350","height":"150","showOnStart":false}' id="textbox"></div>
+    <script>
+      var textbox,checklist;
+      jQuery(window).load(function(){
+        initWindow();//метод должен быть выполнен 1 раз после загрузки страницы
+        createView();
+      });
+      function initWindow(){
+        var sd = [{"id":8280,"name":"Рівень конфеденційності 1","value":1},{"id":8281,"name":"Рівень конфеденційності 2","value":1},{"id":8282,"name":"Рівень конфеденційності 3","value":1},{"id":8283,"name":"Рівень конфеденційності 4","value":1},{"id":8284,"name":"Рівень конфеденційності 5","value":1},{"id":8285,"name":"Рівень конфеденційності 6","value":1}];
+        textbox = new dlgWindow(document.getElementById("textbox"),{"contentType":"textbox","isDrag":false,"onButtonClick": onBtnClick, "onCancelClick": onCancel, "height":150,"width":350}).init();
+        checklist = new dlgWindow(document.getElementById("checklist"),{"listData":sd,"onButtonClick": onBtnClick, "onCancelClick": onCancel, "height":100,"width":150}).init();
+        checklist.dialogShow(100,100);
+        textbox.dialogShow(400,400);
+        // checklist.checkRequired = true;
+      }
+      function onBtnClick(){
+        return;
+      }
+      function onCancel(){
+        return;
+      }
+    </script>
+  </body>
+</html>

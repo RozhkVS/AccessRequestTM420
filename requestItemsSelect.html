@@ -1,0 +1,390 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Проэкт Заявка на доступ Выбор компонентов доступа</title>
+    <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="dialogWindow.js"></script>
+    <script src="ILIB.js"></script>
+    <script src="requestItemsSelect.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ITreeGrid.css">
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+  </head>
+  <body>
+    <div data-dlgwin-options='{"title":"Типи доступiв","width":"150","height":"100","showOnStart":false}' id="checklist"></div>
+    <div data-dlgwin-options='{"title":"Обгрунтування","width":"350","height":"150","showOnStart":false}' id="textbox"></div>
+    <script>
+      var aTypesValTempl = '<a href="JavaScript:onSourceClick({{RowID}})">{{Value}}</a>';
+      var templateParser = function(){
+        var pv,sh,arr = Array.prototype.slice.call(arguments).slice(0),
+        templ = arr[0], paramObj = arr[1], pNames = Object.keys(paramObj);
+        for(var i=0,len=pNames.length;i<len;i++){
+          pv = paramObj[pNames[i]];
+          sh = eval('/{{' + pNames[i] + '}}/g');
+          templ = templ.replace(sh,pv);
+        }
+        return templ;
+      }
+      var sp,ig,TreeView,grid,tab,textbox,checklist;
+      var userColumnModel = [
+          { field: "ItemName", width:250, display: "Найменування", dataType: "string", size: "autofit",showHint: false},
+          { field: "AccessTypes",   width:150, display: "Типи доступiв",       dataType: "string", size: "fixed",showHint: true,buttonStyle:'link'},
+          { field: "Comment",     width:200,  display: "Коментар",        dataType: "string", size: "autofit",showHint: true},
+          { field: "Description",  width:100, display: "Обгрунтування",      dataType: "string", size: "autofit",showHint: true, buttonStyle:'ellipsis'}
+      ];
+      var tvExpandAll = function(){
+        ig.expandAll();
+      }
+      var tvCollapseAll = function(){
+        ig.collapseAll();
+      }
+      var tvSelectInfSystems = function(){
+        if(ig.initialize){
+          admUI.selectInfSystems();
+          var strArr = admUI.getRootFilter();
+          var newRoots = JSON.parse(strArr);
+          ig.rootFilterApplay(newRoots);
+        }
+        else createView();
+      }
+      var menuItemsDef = [
+                 {caption:"Розгорнути все",enabledImage:'expand-all.png',disabledImage:'expand-all-disabled.png',command:tvExpandAll}
+                ,{caption:"Згорнути все",enabledImage:'collaps-all.png',disabledImage:'collaps-all-disabled.png',command:tvCollapseAll}
+                ,{caption:'Вибір &nbsp;систем',enabledImage:'access-types.png',disabledImage:'access-types-disabled.png',command:tvSelectInfSystems}
+      ];
+      jQuery(window).load(function(){
+        initWindow();//метод должен быть выполнен 1 раз после загрузки страницы
+        createView();
+      });
+      function initWindow(){
+        textbox = new dlgWindow(document.getElementById("textbox"),{"contentType":"textbox","sizeLinit":1024,"isDrag":false,"onButtonClick": onBtnClick, "onCancelClick": onCancel, "height":150,"width":350}).init();
+        checklist = new dlgWindow(document.getElementById("checklist"),{"listData":{},"onButtonClick": onBtnClick, "onCancelClick": onCancel, "height":100,"width":150}).init();
+
+        checklist.checkRequired = true;
+        acMahagersTools.show();
+      }
+      var getData = function(refresh,commandText){
+        var data //static variable
+            ,result = new String(),rs;
+        if(!data||refresh){
+          try{
+            rs = admUI.Execute();
+            if(rs.Active){
+              while(!rs.EOF){
+                result += rs.FieldByIndex(0).Value
+                rs.Next();
+              }
+              rs.Close;
+            }
+          }
+          catch(err){
+            alert(err.message);
+          }
+          if(result.length)
+            data = JSON.parse(result);
+          return data;
+        }
+        else if(commandText&&commandText.length>0){
+          var qStr = commandText;
+          try{
+            rs = admUI.Execute(qStr);
+            if(rs.Active){
+              while(!rs.EOF){
+                result += rs.FieldByIndex(0).Value
+                rs.Next();
+              }
+              rs.Close;
+            }
+          }
+          catch(err){
+            alert(err.message);
+          }
+          return result.length ? JSON.parse(result) : undefined;
+        }
+        return data;
+      };
+      var tvCellButtonClick = function(event){
+         var row = event.row,
+             rowId = row.dataset.rowId,
+             cell = row.cells[3],
+             text = cell.innerText;
+        if(!text){
+          var textTemplate = admUI.getTemplate(rowId);
+          if(textTemplate){
+            text = textTemplate;
+          }
+        }
+        if(event.buttonStyle=='link'){
+          onSourceClick(rowId);
+          return;
+        }
+        textbox.addData(text,rowId);
+        admUI.setBtnPanelState(false);
+        textbox.dialogShow();
+      }
+      var onCancel = function(){
+        if(this.contentType == "checklist")
+          if(!checklist.text.length){
+            var row = ig.treeView.tree[this.rowId].row,
+                cell = row.cells[0];
+            cell.querySelector('input').click()
+          }
+        admUI.setBtnPanelState(true);
+      };
+      function onBtnClick(){
+        var row = ig.treeView.tree[this.rowId].row,
+            cell = row.cells[1],rowId = row.dataset.rowId,rowObj = ig.treeView.tree[rowId],
+            types = cell.querySelector('span'),desc = row.cells[3].querySelector('span'),
+            img = row.cells[3].querySelector('img'),strOutput = String();
+        if(this.contentType == "checklist"){
+          strOutput = checklist.text;
+          if(strOutput.length > 0){
+            types.innerHTML = templateParser(aTypesValTempl,{'RowID':rowId,'Value':strOutput});
+            types.title = strOutput;
+            img.parentNode.style.display = '';
+          }
+          else row.cells[0].querySelector('input').click();
+          rowObj.data.AccessTypes = strOutput;
+          admUI.SetAccessTypes(rowId,strOutput,'InputSelected');
+        }
+        else{
+          strOutput = textbox.text;
+          desc.title = desc.innerText = rowObj.data.Description = strOutput;
+          document.trace('Текст введенный как обоснование: ' + '\n' + textbox.text);
+          admUI.SetDescription(rowId,strOutput,'InputSelected');
+        }
+        admUI.setBtnPanelState(true);
+      }
+      var tvSelectedChange = function(event){
+        var listData = [],row = event.row,rowObj = ig.treeView.tree[row.dataset.rowId],
+            cell = row.cells[0],types = row.cells[1].querySelector('span'),
+            desc = row.cells[3].querySelector('span'),img = row.cells[3].querySelector('img'),
+            xx = cell.firstChild.firstChild.nextElementSibling.offsetLeft,
+            ot = parseInt(ig.table.parentNode.offsetTop + 50),
+            yy = cell.firstChild.offsetTop + ot + 6,
+            hh = checklist.height() + 1,wh = window.innerHeight,
+            sData = admUI.getAccessTypes(parseInt(event.row.dataset.rowId));
+        if(event.check){
+          // admUI.insertSelectedData('OutputSelected',parseInt(row.dataset.rowId));
+          admUI.insertSelectedData('InputSelected',parseInt(row.dataset.rowId));
+          img.parentNode.style.display = '';
+          if(!sData)return;
+          listData = JSON.parse(sData);
+          if(listData.length > 1){
+            admUI.setBtnPanelState(false);
+            checklist.addData(listData,parseInt(event.row.dataset.rowId));
+            hh = checklist.height() + 1;
+            if((yy + hh) > wh)
+              yy = parseInt(cell.firstChild.style.top) + ot - hh + 6;
+            checklist.dialogShow(xx,yy);
+          }
+          else{
+            types.innerHTML = templateParser(aTypesValTempl,{'RowID':event.row.dataset.rowId,'Value':listData[0].name});
+            types.title = listData[0].name;
+            img.parentNode.style.display = '';
+            admUI.SetAccessTypes(event.row.dataset.rowId,listData[0].name,'InputSelected');
+          }
+        }
+        else{
+          types.innerHTML = types.title = rowObj.data.AccessTypes = '';
+          desc.innerText = desc.title = rowObj.data.Description = '';
+          img.parentNode.style.display = 'none';
+          // admUI.deleteSelectedData('OutputSelected',parseInt(row.dataset.rowId));
+          admUI.deleteSelectedData('InputSelected',parseInt(row.dataset.rowId));
+        }
+      };
+       function createRowData(rowData,dataSet){
+        var data = {};
+        data.ID = rowData.ID
+        data.AccessTypes = rowData.AccessTypes
+        data.Description = rowData.Description
+        data.PathStr = rowData.PathStr
+        return data;
+      }
+      function getSelRows(){
+        if(ig.selectedItems.length){
+          var res,resArr= new Array();
+          for(var i=0,len=ig.selectedItems.length;i<len;i++){
+            res = ig.treeView.tree[ig.selectedItems[i]].toJSON();
+            resArr.push(res);
+          }
+          // document.trace(' getSelRows: ' + "[" + resArr.join(",") + "]");
+          return resArr.length ? "[" + resArr.join(",") + "]" : "[]";
+        }
+      }
+      var acMahagersTools = (function(userType){
+          var _userType = userType,
+              _left = 0,
+              _top = 82,
+              MainMenu,
+              DetaileView,
+              ComponentView,
+              ComponentName,
+              AccCompComment,
+              RespComment,
+              SystemView,
+              GroupView,
+              SystemName,
+              GroupName,
+              TypeList,
+              AgreementList,
+              PreviewList,
+              ExecutorList,
+              InfSysGroup,
+              ComponentState,
+              acBtn,
+              rcBtn;
+          var renderComponentsView = function(){
+              this.height = window.innerHeight - this.top;
+              this.width = window.innerWidth;
+              if(this.children.length == 1){
+                  this.children[0].width = this.width;
+                  this.children[0].height = this.height;
+                  var obj = this.children[0].children[3];
+                  obj.width = (this.children[0].width - 2) ;
+                  obj.publish({type:'ParentResize',observer: obj});
+              }
+          };
+          var gridSelectChanged = function(event){
+            return true;
+          };
+          function createMainMenu(){
+              MainMenu = new IMainMenu({imagesPath:'images/MenuImages/'});
+              MainMenu.addItems(menuItemsDef);
+              MainMenu.show();
+              mainMenu = MainMenu;
+          };
+          var _treeGridContaineer;
+          function createTreeView(titleView){
+              TreeView = new icgLayout();
+              TreeView.top = 81;
+              TreeView.left = 1;
+              TreeView.height = window.innerHeight - TreeView.top;
+              TreeView.width = Math.ceil(window.innerWidth/2);
+              TreeView.layoutInit(/*'horizontal'*/);
+              TreeView.css.backgroundColor = '#F7F7F7';
+              TreeView.render = renderComponentsView;
+              TreeView.render();
+              var gbTreeView = new icgGroupBox({parent:TreeView,left:0,top:0,width:TreeView.width,height:TreeView.height,caption:titleView});
+              gbTreeView.font.bold =true;
+              _treeGridContaineer = gbTreeView;
+              return TreeView;
+          }
+          return {
+              show: function(){
+                  begTime = new Date();
+                  createMainMenu();
+                  endTime = new Date();
+                  document.trace('createMainMenu (мсек):' + dateDiff(begTime,endTime,JST_FIELD_MILLISECOND));
+                  begTime = new Date();
+                  createTreeView('Компоненти доступу');//Компоненти доступу
+                  ig = new iTreeGrid({parent:_treeGridContaineer,top:50,left:5,columnModel:userColumnModel,callback:gridSelectChanged/*,initFunction:getData*/});
+                  sp = new ISearchPanel({parent:_treeGridContaineer,source:ig});
+                  TreeView.render();
+                  // sp.show();
+                  endTime = new Date();
+                  document.trace('createTreeView (сек):' + dateDiff(begTime,endTime,JST_FIELD_SECOND));
+              }
+          }
+      }());
+      function setValuesCheck(data,sel){
+        var tArr = [],
+            sourceData = data;
+        tArr = sel.split('; ');
+        if(tArr.length){
+          tArr.forEach(function(el){
+            var elm = el;
+            if(sourceData.length){
+              sourceData.forEach(function(el){
+                if(el.name == elm)
+                  el.value = 1;
+              });
+            }
+          });
+        }
+        return sourceData;
+      };
+      var onSourceClick = function(id){
+        var listData = [],
+            sData = admUI.getAccessTypes(id),
+            row = ig.treeView.tree[id].row,
+            cell = row.cells[0],
+            xx = cell.firstChild.firstChild.nextElementSibling.offsetLeft,
+            ot = parseInt(ig.table.parentNode.offsetTop + 50),
+            yy = cell.firstChild.offsetTop + ot + 6,
+            hh = checklist.height() + 1,
+            wh = window.innerHeight;
+        listData = JSON.parse(sData);
+        if(listData.length > 1){
+          listData = setValuesCheck(listData,row.cells[1].innerText);
+          document.trace(JSON.stringify(listData));
+          checklist.addData(listData,id);
+          hh = checklist.height() + 1;
+          if((yy + hh) > wh)
+            yy = parseInt(cell.firstChild.style.top) + ot - hh + 6;
+          checklist.dialogShow(xx,yy);
+          admUI.setBtnPanelState(false);
+        }
+      };
+      function createView(){
+        var data = getData(true);
+        if(!data){
+          mainMenu.buttons[2].enabled = true;
+          return;
+        }
+        window.needToLoad = [];
+        var syncISID;
+        window.syncTimeID;
+        ig.dataSet  = data;
+        ig.InitFunction = getData;
+        ig.SelectedChange = tvSelectedChange;
+        ig.CellButtonClick = tvCellButtonClick;
+        ig.RowDataBuilder = createRowData;
+        ig.Init({viewMode: 2});
+        var fStr = admUI.getRootFilter(),itemsId = JSON.parse(fStr);
+        grid = document.getElementById('iTreeGrid0Data');
+        tab = grid.querySelector('table');
+        needToLoad = ig.needToAsyncLoad.reverse();
+        var TreeGrid = ig;
+        var t2,t1;/*убрать после релиза*/
+        syncTimeID = setInterval(function(){
+          var ones=false;
+          if(!t1){/*убрать после релиза*/
+            t1 = new Date();
+            ones = true;
+          }/*убрать после релиза*/
+          var cur = needToLoad.length ? needToLoad.pop() : undefined;
+          if(cur){
+            ig.loadChildrenRows(cur);//передавать в качестве callback
+            if(ones){
+              mainMenu.fire({type:'onInit'});//<<<<< /*нужно как-то передавать ссылку на меня или что-то в этом роде универсальное*/
+              ig.fire({type:'onInit'});
+              ones = false
+            }
+          }
+          else{
+            clearInterval(syncTimeID);
+            sp.show();
+            t2 = new Date();/*убрать после релиза*/
+            document.trace('Сбросили интервал проверки (сек):' + dateDiff(t1,t2,JST_FIELD_SECOND));/*убрать после релиза*/
+          }
+        },10);
+      };
+      iEvents.addHandler(document, "keydown", function(e){
+        // iEvents.preventDefault(e);
+        if(e.ctrlKey && e.keyCode == 70){
+          //alert('CTRL+F Detected!');
+          iEvents.preventDefault(e);
+          return false;
+        }
+      });
+      iEvents.addHandler(document, "contextmenu", function(e){
+        iEvents.preventDefault(e);
+      });
+    </script>
+  </body>
+</html>

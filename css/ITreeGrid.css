@@ -1,0 +1,309 @@
+.grid-data{
+	position: absolute;
+	top: 21px;
+	height: 150px;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 0px solid #ddd;
+	overflow-x: auto;
+	overflow-y: scroll;
+	background-color: #FFFFFF;
+}
+.grid-view{
+	padding-bottom: 5px;
+	position: absolute;
+	left:0px;
+}
+.title-row{
+	position: absolute;
+	border: 0px;
+	width: 100%;
+	background: #F0F0F0 url(images/bg-table-thead.png) repeat-x top left;
+}
+.grid-cell{
+	position: relative;
+	border-right: 1px dotted silver;
+	border-bottom: 1px solid #ddd;
+	overflow: hidden;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-bottom: 1px;
+	line-height: 21px;
+	height: 21px;
+	overflow-x: hidden;
+	float: left;
+	display:block;
+	white-space: nowrap;
+	box-sizing: border-box;
+	cursor: default;
+}
+.title-cell{
+	position: relative;
+	border-right: 1px dotted silver;
+	overflow: hidden;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-bottom: 1px;
+	line-height: 21px;
+	overflow-x: hidden;
+	float: left;
+	display:block;
+/*	display: inline-flex;*/
+	white-space: nowrap;
+	box-sizing: border-box;
+	text-align: left;
+	cursor: default;
+}
+.grid-header{
+	position: relative;
+	border-left:1px solid #ddd;
+	border-right:1px solid #ddd;
+	border-top: 1px solid #ddd;
+	top: 0px;
+	height: 21px;
+	background-color: #F0F0F0;
+}
+.tree-grid{
+	position:absolute;
+	cursor: default;
+	border-bottom: 1px solid #ddd;
+	font-weight: 400;
+	font-size:	1.1em;
+}
+.tree-grid div.grid-header th{
+	font-weight: normal;
+}
+.tree-grid div.grid-data tr.selected {
+  background-color: #EEF8FC;
+}
+.tree-grid div.grid-data tr.blocked {
+  color: red;
+}
+.tree-grid div.grid-data tr.blocked.selected {
+  background-color: #D1E8FF;
+}
+.tree-grid div.grid-data tr.empty {
+  color: #939393;
+  font-weight: 700;
+}
+.tree-grid div.grid-data tr.empty.selected {
+	background-color: #D1E8FF;
+}
+.tree-grid div.grid-data tr.collapsed span.grid-indenter {
+  background-image: url(images/expand.png);
+}
+.tree-grid div.grid-data tr.expanded span.grid-indenter{
+  background-image: url(images/collapse.png);
+}
+.tree-grid div.grid-data tr.collapsed.selected span.grid-indenter {
+  background-image: url(images/expand.png);
+}
+.tree-grid div.grid-data tr.expanded.selected span.grid-indenter {
+  background-image: url(images/collapse.png);
+}
+.tree-grid div.grid-data td div span.grid-indenter{
+  background-position: left center;
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tree-grid div.grid-data tr span.checkaccept{
+  height: 13px;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+.tree-grid div.grid-data td div span.checkaccept {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  width: 100%;
+}
+.tree-grid div.grid-data td div span.checkaccept a {
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 13px;
+  height: 16px;
+  margin: 4px 5px 0px 0px;
+}
+/*.tree-grid div.grid-data tr span.checkaccept a {
+  background-image: url("images/unchecked.gif");
+}
+.tree-grid div.grid-data tr span.checkaccept.checked a{
+  background-image: url("images/checked.gif");
+}*/
+.tree-grid div.grid-data td div span{
+	width: 100%;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="2"] td:first-child div span{
+	margin-left: 38px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="1"] td:first-child div span{
+	margin-left: 16px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.tree-grid tr[data-item-type="group"] td:first-child div span{
+	padding-left: 16px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.tree-grid tr[data-item-type="component"]{
+	font-style: italic;
+}
+.tree-grid tr[data-item-type="system"]{
+	font-weight: 700;
+}
+.tree-grid tr[data-item-type="group"]{
+	font-size: 0.9em;
+	font-weight: 700;
+}
+.tree-grid tr[data-item-type="system"] td:first-child div span{
+	padding-left: 16px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="2"] td:first-child div input{
+	position: absolute;
+	margin-left: 22px;
+	margin-top: 3px;
+	margin-right: 3px;
+	margin-bottom: 0px;
+	line-height: 16px;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="1"] td:first-child div input{
+	position: absolute;
+	margin-left: 22px;
+	margin-top: 3px;
+	margin-right: 3px;
+	margin-bottom: 0px;
+	line-height: 16px;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="1"] td:first-child div .grid-checkbox{
+	margin-left: 38px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.tree-grid tr[data-item-type="component"][data-item-level="2"] td:first-child div .grid-checkbox{
+	margin-left: 38px;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+}
+.toolBar /*toolbar*/ {
+	background: #F0F0F0 url(images/bg.gif) repeat-x top;
+	position: relative;
+	border: 1px solid #ccc;
+	border-bottom: 0px;
+	overflow: hidden;
+	height: 51px;
+}
+.divToolBar {
+	float: left;
+	clear: both;
+	padding: 1px;
+	margin-top: 2px;
+	width:100%;
+	background: #F0F0F0;
+	position: relative;
+}
+.btnseparator {
+	float: left;
+	height: 48px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #fff;
+	margin: 1px;
+}
+div.dlgwin td div span.itemtext {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  height: 12px;
+  line-height: 100%;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+div.dlgwin td div span.itemcheck {
+  margin: 0;
+  padding-right: 3px;
+  text-align: right;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+div.dlgwin td div span.itemcheck a {
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 13px;
+  height: 13px;
+}
+div.dlgwin tr span.itemcheck a {
+  background-image: url("images/unchecked.gif");
+}
+div.dlgwin tr span.itemcheck.checked a
+{
+  background-image: url("images/checked.gif");
+}
+.tool-menu {
+	background: #F0F0F0 url(images/bg-table-thead.png) repeat-x top left;
+  border: 0px solid #eee;
+  position: relative;
+}
+.tool-menu div.toolBar /*toolbar*/ {
+	height: 28px;
+	position: relative;
+	border: 1px solid #ccc;
+/*	border-bottom: 0px;*/
+	overflow: hidden;
+}
+.tool-menu div.divToolBar {
+	float: left;
+	clear: both;
+	padding: 1px;
+	margin-top: 2px;
+}
+.tool-menu div.btnseparator {
+	float: left;
+	height: 22px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #fff;
+	margin: 1px;
+}
+.tool-menu div.fbutton {
+	float: left;
+	display: block;
+	cursor: default;
+	padding: 0px;
+	border: 1px solid #B4B4B4;
+}
+.tool-menu div.fbutton div {
+	float: left;
+	padding: 0px 2px;
+	border-left: 1px solid #fff;
+	border-top: 1px solid #fff;
+	border-right: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+}
+.tool-menu div.fbutton span {
+	float: left;
+	display: block;
+	padding: 3px;
+}

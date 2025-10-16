@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+		<meta http-equiv="X-UA-Compatible" content="IE=11">
+		<title>Маршрут узгодження заявки на доступ</title>
+		<script src="vendor/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/requestreport.css">
+		<style TYPE="TEXT/CSS">
+			body {
+				margin: 0px;
+				padding: 0px;
+				border:0px;
+				width:100%;
+				height:100%;
+				background: #FEFEFE;
+				font-family:Segoe UI;
+				font-size:16px;
+				line-height:110%;
+				overflow-x: auto;
+        		overflow-y: auto;
+			}
+     </style>
+	</head>
+	<body>
+		<div id="request-report" style="border: 1px solid #5B9BD5;">
+			<table class='request-head'></table>
+		</div>
+		<table class='request-footer'>
+			<thead></thead><tbody></tbody>
+			<tfoot>
+				<tr>
+					<td style="vertical-align: text-top;">&#42;</td><td colspan="2">1). Наведено перелік обов'язкових учасників маршруту, видалення яких неможливо. Без їхнього ухгодження заявка не буде виконана.<br>2). За бажанням, у вікні параметрів при старті маршруту, можете вказати додаткових учасників для узгодження або ознайомлення, результат виконання контролю якими на хід заявки не впливає</td>
+				</tr>
+			</tfoot>
+		</table>
+		<script id="template-request-header" type="text/template">
+			<thead><tr><th colspan="3"><span>Заявка на доступ № {{requestNumber}} від {{requestDate}} р. *</span></th></tr></thead><tbody><tr><td><table class='stage-list'><thead></thead><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td class="col-1 request-info"><span>Автор заявки:</span></td><td><span>{{requestAuthor}}</span></td><td>&nbsp;</td></tr><tr><td class="col-1 request-info"><span>Надати доступ для співробітника:</span></td><td><span>{{requestEmployee}}</span></td><td>&nbsp;</td></tr></tbody><tfoot></tfoot></table></td></tr></tbody><tfoot><tr><td colspan="3"><span>Маршрут узгодження заявки</span></td></tr></tfoot>
+		</script>
+		<script id="template-name-member" type="text/template">
+			<tr class="{{classRow}}"><td class="col-1 component-name">{{componentName}}</td><td class="col-2"><span>{{memberType}}</span></td><td><span>{{memberName}}</span></td></tr>
+		</script>
+		<script id="template-empty-member" type="text/template">
+			<tr class="{{classRow}}"><td class="col-1">&nbsp;</td><td class="col-2"><span>{{memberType}}</span></td><td><span>{{memberName}}</span></td></tr>
+		</script>
+		<script id="template-inf-system" type="text/template">
+			<tr class="{{classRow}}"><td class="inf-sys" colspan="3">{{infSystem}}</td></tr>
+		</script>
+		<script type="text/javascript">
+			window.addEventListener("load",function(event){
+				var data = $.parseJSON(window.external.Form.View.Component.Requisites("Params").AsString)
+				var HeaderHtml = document.getElementById("template-request-header").innerHTML;
+				var reportHtml = HeaderHtml.replace(/{{requestNumber}}/g, data.requestNumber)
+									   	   .replace(/{{requestDate}}/g, data.requestDate)
+									       .replace(/{{requestAuthor}}/g, data.requestAuthor)
+									       .replace(/{{requestEmployee}}/g, data.requestEmployee);
+	      		$('.request-head').html(reportHtml);
+	      		var stages = data.stages;
+	      		for(var i=0,len=stages.length;i<len;i++){
+	      			if(stages[i].items.length)
+	      				createStageList(i,stages[i]);
+	      		}
+	      	},false);
+			function createStageList(stageNumber,listData){
+				var rowHTML,resHTML,colorClass = 'even',stageName = listData.stageTitle,membersList = listData.items;
+				$('#request-report')
+				.append(
+					$('<table id="stage-' + stageNumber + '" class="stage-list"></table>')
+					.append(
+						$('<thead></thead>')
+					  .append(
+							$('<tr></tr>')
+							.append(
+								$('<th colspan="3"><span>' + stageName + '</span></th>')
+							)
+						)
+					)
+				);
+				for(var i=0,len = membersList.length;i<len;i++){
+					if(stageNumber){
+						if(colorClass=='odd') colorClass = 'even'
+						else colorClass = 'odd';
+					}
+					if(membersList[i].AccessComponent){
+						rowHTML = $('#template-name-member').html()
+		                    .replace(/{{classRow}}/g,colorClass)
+							.replace(/{{componentName}}/g,membersList[i].AccessComponent)
+							.replace(/{{memberType}}/g,membersList[i].PerformerRole)
+							.replace(/{{memberName}}/g,membersList[i].PerformerName);
+					}
+					else{
+						if(membersList[i].InfSystem){
+							colorClass = 'even';
+							rowHTML = $('#template-inf-system').html()
+			                    .replace(/{{classRow}}/g,colorClass)
+								.replace(/{{infSystem}}/g,membersList[i].InfSystem);
+						}
+						else{
+							rowHTML = $('#template-empty-member').html()
+			                    .replace(/{{classRow}}/g,colorClass)
+								.replace(/{{memberType}}/g,membersList[i].PerformerRole)
+								.replace(/{{memberName}}/g,membersList[i].PerformerName);
+						}
+					}
+					resHTML += rowHTML;
+				}
+				$('#stage-'+stageNumber).append($('<tbody></tbody>').html(resHTML))
+			}
+		</script>
+	</body>
+</html>

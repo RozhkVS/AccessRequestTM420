@@ -1,0 +1,116 @@
+/*.request-head td span{
+    margin-left: 15px;
+}*/
+.request-head{
+/*    font-size: 14px;*/
+    width:100%;
+    border-collapse: collapse;
+    font-style: italic;
+}
+.request-head thead{
+    padding: 0px;
+    font-weight: 600;
+    text-align: left;
+    font-style: normal;
+    margin: 0px 0px 5px 15px;
+    background-color: #BDD7EE;
+    background-image: url(../images/bg.png);
+    background-repeat: repeat-x;
+}
+.request-head th{
+    text-align: left;
+}
+.request-head th span{
+    margin-left: 15px;
+}
+.request-head td{
+    text-align: left;
+/*    font-size: 14px;*/
+}
+.request-head td span{
+    margin-left: 15px;
+}
+.request-head tfoot {
+    margin: 0px;
+    padding: 0px;
+    font-weight: 700;
+    text-align: left;
+    font-style: normal;
+    background-color: #DDEBF7;
+    background-image: url(../images/bg.png);
+    background-repeat: repeat-x;
+}
+.request-footer{
+    font-size: 13px;
+    width:100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+.request-footer th span{
+    margin-left: 15px;
+}
+.request-footer tfoot {
+    margin: 0px;
+    padding: 0px;
+    text-align: left;
+    border-top: 1px solid #000;
+    margin-top: 10px;
+}
+.stage-list td{
+    padding-left: 15px;
+}
+.stage-list td.inf-sys{
+    padding-left: 30px;
+    font-weight: 700;
+}
+.stage-list td span{
+    margin-left: 0px;
+}
+.stage-list{
+    font-size: 15px;
+    width:100%;
+    border-collapse: collapse;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+.stage-list thead{
+    padding: 0px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    background-color: #F0F0F0;
+    font-style: normal;
+    background-image: url(../images/bg.png);
+    background-repeat: repeat-x;
+    padding-bottom:2px;
+}
+.stage-list th{
+    text-align: left;
+}
+.stage-list th span{
+    margin-left: 15px;
+}
+.stage-list tr.odd{
+    background-color: #F2F2F2;
+}
+.stage-list tr.even{
+    background-color: inherit;
+}
+.col-1{
+    min-width: 250px;
+    width: 40%;
+    padding-bottom:2px;
+}
+.col-2{
+    min-width: 250px;
+    width: 30%;
+s}
+.col-1.component-name{
+    text-align: right;
+    font-style: italic;
+}
+.col-1.request-info{
+    font-weight: 700;
+    font-style: normal;
+    padding-bottom:2px;
+}

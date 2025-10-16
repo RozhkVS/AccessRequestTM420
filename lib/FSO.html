@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>iGrid beta Разработка и обкатка функционала</title>
+    <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <style TYPE="TEXT/CSS">
+      html{
+        -ms-content-zooming: none;
+      }
+      body {
+        margin: 0px;
+        padding: 0px;
+        border:0px;
+        width:100%;
+        height:100%;
+        background: #FEFEFE;
+        font-family:Segoe UI;
+        font-size:12px;
+        line-height:100%;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+       </style>
+  </head>
+  <body>
+<!--     <div style="position:absolute;border:1px;margin:1px;background-color: linen;">
+    <strong>Дубовик Д.М.</strong>
+    <br><small><i>Администратор системы</i></small>
+    <br><small>Сектор администрирования прикладного ПО</small>
+    <br><small><strong>ООО АТБ Энерго</strong></small>
+    </div> -->
+    <input type="file" id="file-picker" name="fileList" webkitdirectory multiple/>
+    <ul id="listing"></ul>
+    <script type="text/javascript">
+      String.prototype.escapeJSON = function() {
+          var result = "";
+          for (var i = 0; i < this.length; i++)
+          {
+              var ch = this[i];
+              switch (ch)
+              {
+                  case "\\": ch = "\\\\"; break;
+                  case String.fromCharCode(34): ch = String.fromCharCode(92,34); break;
+                  case String.fromCharCode(34): ch = String.fromCharCode(92,34); break;
+                  case "\&": ch = "\\&"; break;
+                  case "\t": ch = "\\t"; break;
+                  case "\n": ch = "\\n"; break;
+                  case "\r": ch = "\\r"; break;
+                  case "\b": ch = "\\b"; break;
+                  case "\f": ch = "\\f"; break;
+                  case "\v": ch = "\\v"; break;
+                  default: break;
+              }
+              result += ch;
+          }
+          return result;
+      };
+      var dbscheme = 'USE [dirtest]',fso;
+      // dbscheme = prompt('Сколько тебе лет?', dbscheme);
+
+      function sourceFolderFileProcessing(folderspec){
+        var fso, f, fc, s;
+        fso = new ActiveXObject("Scripting.FileSystemObject");
+        f = fso.GetFolder(folderspec);
+        sourceFileProcessing(f);
+        fc = new Enumerator(f.SubFolders);
+        s = "";
+        for(; !fc.atEnd(); fc.moveNext()){
+          s += fc.item();
+          s += "\n";
+          sourceFileProcessing(fc.item());
+        }
+        return(s);
+      }
+
+      function sourceFileProcessing(folderspec){
+        var fso, f, f1, fc, s, fileFullName, fileName, ext;
+        fso = new ActiveXObject("Scripting.FileSystemObject");
+        f = fso.GetFolder(folderspec);
+        fc = new Enumerator(f.files);
+        s = "";
+        for(; !fc.atEnd(); fc.moveNext()){
+          fileFullName = fc.item();
+          fileName = fso.GetFileName(fileFullName);
+          ext = fileName.substr(fileName.lastIndexOf(".") + 1);
+          if(ext == "sql")
+            changeUsedScheme(fileFullName);
+          s += fso.GetFileName(fc.item());
+          s += "\n";
+        }
+        return(s);
+      }
+
+      function changeUsedScheme(file){
+        var fso, textStream, f, r = 0, str = [];
+        var ForReading = 1,
+        ForWriting = 2;//D:\=WEB_PROJECT=\jQuery treetable
+        fso = new ActiveXObject("Scripting.FileSystemObject");
+        f = fso.GetFile(file);
+        textStream = f.OpenAsTextStream(ForReading,-2)
+        str.push(dbscheme);
+        textStream.SkipLine();
+        while(!textStream.AtEndOfStream)
+          str.push(textStream.ReadLine());
+        textStream.Close();
+        textStream = f.OpenAsTextStream(ForWriting,-2)
+        for (var i = 0; i < str.length; i++)
+          textStream.WriteLine(str[i]);
+        textStream.Close();
+        return(str.toString());
+      }
+      var path = prompt('Путь к каталогу с SQL-скриптами').escapeJSON();
+      // alert(path);
+      alert(sourceFolderFileProcessing(path));
+      //alert(sourceFolderFileProcessing("D:\\=RELEASES=\\DirectumUpdate_28_04_2025\\DIR-3741\\SQL"));
+    </script>
+  </body>
+</html>

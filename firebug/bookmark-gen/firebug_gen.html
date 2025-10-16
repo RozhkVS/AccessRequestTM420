@@ -1,0 +1,59 @@
+<?xml version="1.1" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Firebug bookmarklet generator</title>
+<script type="text/javascript">
+    function gen(f) {
+
+
+        if (f[0].value == '') {
+            alert('Enter the path to firebug.js');
+            return;
+        }
+        if (f[0].value.indexOf('firebug.js') == -1) {
+            alert('The path should include firebug.js');
+            return;
+        }
+
+        var source = 'javascript:(function(){var firebug_js = document.createElement(\'script\');firebug_js.setAttribute(\'type\', \'text/javascript\');firebug_js.src = \'THEURL\';document.getElementsByTagName(\'head\')[0].appendChild(firebug_js);firebug_js.onreadystatechange = function () {if (firebug_js.readyState == \'complete\') {console.open()}}})()';
+
+        source = source.replace(/THEURL/, escape(f[0].value));
+
+        document.getElementById('result').style.visibility = 'visible';
+        document.getElementById('book-href').href = source;
+        document.getElementById('href-title').innerHTML = 'Firebug - ' + f[0].value.substring(0, 20) + '...';
+
+
+        return false;
+    }
+</script>
+</head>
+<body>
+
+<h1>Firebug bookmarklet generator</h1>
+
+<form action="#" onsubmit="return gen(this)">
+
+    The path (URL) to your firebug.js,
+    <br />
+    e.g. "http://www.phpied.com/files/firebug/firebug.js"
+    <br />
+    <input type="text" style="width: 90%" />
+    <br />
+    <input type="submit" value="Generate bookmarklet" />
+
+</form>
+
+
+<div id="result" style="padding: 20px; border: 1px solid lightblue; width:220px; visibility: hidden">
+    Right click and Add to Favorites
+    <a href="#" id="book-href"><span id="href-title">&nbsp;</span></a>
+</div>
+
+<p><a href="http://www.phpied.com/firebug-console-for-ie">About this thing...</a></p>
+
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <title>iGrid beta Разработка и обкатка функционала</title>
+    <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="ILIB.js"></script>
+    <script src="uiAdminComponents.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ITreeGrid.css">
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+  </head>
+  <body>
+     <script>
+      var doc,sp,ig,TreeView,DetaileView,SystemView,ACView,cMenu,sMenu,gMenu,mainMenu,grid,tab,TabCtrl,exeList;
+      jQuery(window).load(function(){
+        setTimeout(function(){getData(false);},100);
+        createView();
+      });
+      var getData = function(refresh,commandText){
+        var data,result = new String(),rs;
+        if(!data||refresh){
+          try{
+            rs = admUI.Execute();
+            if(rs.Active){
+              while(!rs.EOF){
+                result += rs.FieldByIndex(0).Value
+                rs.Next();
+              }
+              rs.Close;
+            }
+          }
+          catch(err){
+            alert(err.message);
+          }
+          data = JSON.parse(result);
+          return data;
+        }
+        else if(commandText&&commandText.length>0){
+          var qStr = commandText + ' for json path, INCLUDE_NULL_VALUES';
+          try{
+            rs = admUI.Execute(qStr);
+            if(rs.Active){
+              while(!rs.EOF){
+                result += rs.FieldByIndex(0).Value
+                rs.Next();
+              }
+              rs.Close;
+            }
+          }
+          catch(err){
+            alert(err.message);
+          }
+          return JSON.parse(result);
+        }
+        return data;
+      }
+      var getRowState = function(){
+        var el = ig.activeRow.querySelectorAll('SPAN')[1];
+        return el.innerText;
+      }
+      var isManagerAdmin = function(){
+        var res;
+        if(!res){
+          res = window.external.Form.View.Component.isManagerAdmin();
+        }
+        return res;
+      }
+      var isUserManager = function(){
+        var res;
+        if(!res){
+          res = window.external.Form.View.Component.isUserManager();
+        }
+        return res;
+      }
+      var isUserAdmin = function(){
+        var res;
+        if(!res){
+          res = window.external.Form.View.Component.isUserAdmin();
+        }
+        return res;
+      }
+      var getAccessRights = function(){
+        var userType;
+        if(!userType){
+          if(!isUserAdmin()){
+            if(isManagerAdmin()){
+              userType = 1;//только админ ответственных
+              if(admUI.isT60Manager()){
+                if(admUI.isOtherItemsManager())
+                  userType = 12//админ ответственных + ответственный за П60 + ответственный за другие компоненты
+                else userType = 10;//админ ответственных + ответственный за П60
+              }
+              else if(admUI.isOtherItemsManager()) userType = 11;//админ ответственных + ответственный за другие компоненты
+            }
+            else{
+              userType = 2;//только ответственный
+              if(admUI.isT60Manager()){
+                if(admUI.isOtherItemsManager())
+                  userType = 21 //ответственный за П60 + ответственный за другие компоненты
+                else
+                  userType = 20;//ответственный только за П60
+              }
+            }
+          }
+          else
+            userType = 0;//АДМИН
+        }
+        return userType;
+      }
+      var acMahagersTools = (function(userType){
+          var _userType = userType,
+              _left = 0,
+              _top = 82,
+              MainMenu,
+              DetaileView,
+              ComponentView,
+              ComponentName,
+              AccCompComment,
+              RespComment,
+              SystemView,
+              GroupView,
+              SystemName,
+              GroupName,
+              TypeList,
+              AgreementList,
+              PreviewList,
+              ExecutorList,
+              InfSysGroup,
+              ComponentState,
+              acBtn,
+              rcBtn;
+          var renderComponentsView = function(){
+              this.height = window.innerHeight - this.top;
+              this.width = Math.ceil(window.innerWidth/2);//iTreeGrid
+              if(this.children.length == 1){
+                  this.children[0].width = this.width;
+                  this.children[0].height = this.height;
+                  var obj = this.children[0].children[3];
+                  obj.width = (this.children[0].width - 2) ;
+                  obj.publish({type:'ParentResize',observer: obj});
+              }
+          }
+          var renderDetaileView = function(){
+              this.height = window.innerHeight - this.top;
+              this.left = Math.ceil(window.innerWidth/2);
+              this.width = Math.ceil(window.innerWidth/2);//iTreeGrid
+              if(this.children.length){
+                  for(var i=0;i<this.children.length;i++){
+                    this.children[i].width = this.width;
+                    this.children[i].height = this.height;
+                  }
+                  var eLeft = this.children[0].children[3].width + this.children[0].children[3].left - 100
+                  this.children[0].children[5].left = eLeft;
+                  this.children[0].children[6].left = eLeft - 40;
+              }
+          }
+          var setTypesList = function(strTypes){
+            var arr = [];
+            if(strTypes)
+              arr = strTypes.split(',');
+            if(TypeList.itemsCount>0){
+              for(var i=TypeList.itemsCount - 1;i>=0;i--){
+                TypeList.Delete(i);
+              }
+            }
+            arr.forEach(function(item){TypeList.Add(item)})
+          }
+          var setAgreementList = function(stageList){
+            clearStageList(2);
+            stageList.forEach(function(item){
+              var s = item.MemberName;
+              AgreementList.Add(s);
+            });
+          }
+          var setPreviewList = function(stageList){
+            clearStageList(3);
+            stageList.forEach(function(item){
+              var s = item.MemberName;
+              PreviewList.Add(s)
+            });
+          }
+          var setExecutorList = function(stageList){
+            clearStageList(4);
+            stageList.forEach(function(item){
+              var s = item.MemberName;
+              ExecutorList.Add(s);
+            });
+          }
+          var clearStageList = function(stageID){
+            var stageList;
+            switch(stageID){
+              case 2:
+                stageList = AgreementList;
+                break;
+              case 3:
+                stageList = PreviewList;
+                break;
+              case 4:
+                stageList = ExecutorList;
+                break;
+            }
+            if(stageList.itemsCount>0){
+              for(var i=stageList.itemsCount - 1;i>=0;i--){
+                stageList.Delete(i);
+              }
+            }
+          }
+          var gridSelectChanged = function(event){
+            var parentRow,
+                parentType,
+                groupName,
+                systemName,
+                componentName,
+                systemID,
+                text,
+                elm = event.grid.activeRow,
+                eType = elm.getAttribute('data-item-type'),
+                parentID = elm.getAttribute('data-parent-id'),
+                itemID = parseInt(elm.getAttribute('data-row-id'));
+            switch(eType){
+              case 'component':
+                  var InfSysGroupName,
+                      componentName = elm.firstChild.innerText,
+                      componentState = elm.children[1].innerText,
+                      types = window.external.Form.View.Component.getTypes(itemID),
+                      stages = JSON.parse(window.external.Form.View.Component.getStageList(itemID));
+                  for(var i = 2; i <= 4; i++)clearStageList(i);
+                  parentRow = ig.treeView.tree[parentID].row;
+                  parentType = parentRow.getAttribute('data-item-type');
+                  groupName = '';
+                  if(parentType == 'group'){
+                    groupName = parentRow.firstChild.innerText;
+                    systemID = parentRow.getAttribute('data-parent-id');
+                  }
+                  systemName = '';
+                  if(parentType == 'system'){
+                    systemName = parentRow.firstChild.innerText;
+                    systemID = parentID;
+                  }
+                  if(groupName){
+                    parentRow = ig.treeView.tree[systemID].row;
+                    systemName = parentRow.firstChild.innerText;
+                    InfSysGroupName = systemName + '/' + groupName;
+                  }
+                  else InfSysGroupName = systemName;
+                  InfSysGroup.caption = InfSysGroupName;
+                  ComponentState.value = componentState;
+                  if(stages){
+                    stages.Items.forEach(function(item){
+                        switch(item.StageID){
+                          case 2:
+                            setAgreementList(item.Items);
+                            break;
+                          case 3:
+                            setPreviewList(item.Items);
+                            break;
+                          case 4:
+                            setExecutorList(item.Items);
+                            break;
+                        }
+                    });
+                  }
+                  setTypesList(types);
+                  SystemView.visible = false;
+                  ComponentView.visible = true;
+                  GroupView.visible = false;
+                  ComponentName.value = componentName;
+                  text = window.external.Form.View.Component.getAccCompComment(itemID);
+                  text = text.replace('\n\r',' ')
+                  AccCompComment.value = text;
+                  acBtn.visible = false;
+                  text = window.external.Form.View.Component.getRespComment(itemID);
+                  text = text.replace('\n\r',' ')
+                  RespComment.value = text;
+                  rcBtn.visible = false;
+                  break;
+              case 'group':
+                  parentRow = ig.treeView.tree[parentID].row;
+                  systemName = parentRow.firstChild.innerText;
+                  systemID = parentID;
+                  groupName = systemName + '/' + elm.firstChild.innerText;
+                  ComponentView.visible = false;
+                  SystemView.visible = false;
+                  GroupView.visible = true;
+                  GroupName.value = groupName;
+                  break;
+              case 'system':
+                  sysName = elm.firstChild.innerText;
+                  systemID = itemID;
+                  SystemView.visible = true;
+                  SystemName.value = sysName;
+                  GroupView.visible = false;
+                  ComponentView.visible = false;
+                  break;
+            }
+            DetaileView.render();
+            renderMainMenu(eType,systemID);
+          }
+          function renderMainMenu(itemType,systemID){
+            var accessRights = [],
+                rights = getAccessRights(),
+                isT60Item,isManagerItem;
+            if(rights==0){
+              accessRights = [true,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
+              isT60Item = admUI.isT60Item(systemID);//компонент П60
+              if(isT60Item){
+                for(var i=2;i<11;i++){
+                  if(i!=9)
+                    accessRights[i] = false;
+                }
+                if(itemType=='system')
+                  accessRights[11] = false;
+              }
+              else{
+                switch(itemType){
+                case 'system':
+                  accessRights[3] = false;
+                  accessRights[5] = false;
+                  accessRights[6] = false;
+                  accessRights[8] = false;
+                  accessRights[11] = false;
+                  break;
+                case 'group':
+                  accessRights[3] = false;
+                  accessRights[8] = false;
+                  accessRights[11] = false;
+                  break;
+                case 'component':
+                  accessRights[5] = false;
+                  accessRights[6] = false;
+                  break;
+                }
+              }
+            }
+            if(isManagerAdmin()){
+              accessRights = [true,true,false,false,false,false,false,false,false,true,false,false,false,false,false];
+              if([11,12].includes(rights)){
+                if(admUI.isItemManager(systemID)){//АО на своей системе
+                  accessRights[2] = true;
+                  accessRights[4] = true;
+                  accessRights[7] = true;
+                  accessRights[12] = true;
+                  switch(itemType){
+                  case 'group':
+                    accessRights[5] = true;
+                    accessRights[6] = true;
+                    break;
+                  case 'component':
+                    accessRights[3] = true;
+                    accessRights[8] = true;
+                    accessRights[11] = true;
+                    break;
+                  }
+                }
+                else{
+                  if(rights==11)accessRights[10] = false;
+                }
+                if(admUI.isT60Item(systemID)){
+                  for(var i=2;i<11;i++)
+                    if(i!=9)
+                      accessRights[i] = false;
+                }
+              }
+              if(rights==10){
+                accessRights[12] = true;
+                accessRights[11] = true;
+              }
+            }
+            else{
+              if(!isUserAdmin()){
+                accessRights = [true,true,true,true,true,true,true,true,true,false,true,true,true,false,true];
+                isT60Item = admUI.isT60Item(systemID);//компонент П60
+                if(isT60Item){
+                  for(var i=2;i<11;i++)
+                    accessRights[i] = false;
+                  if(itemType=='system')
+                    accessRights[11] = false;
+                }
+                else{
+                  switch(itemType){
+                  case 'system':
+                    accessRights[3] = false;
+                    accessRights[5] = false;
+                    accessRights[6] = false;
+                    accessRights[8] = false;
+                    accessRights[11] = false;
+                    break;
+                  case 'group':
+                    accessRights[3] = false;
+                    accessRights[8] = false;
+                    accessRights[11] = false;
+                    break;
+                  case 'component':
+                    accessRights[5] = false;
+                    accessRights[6] = false;
+                    break;
+                  }
+                }
+              }
+            }
+            if([2,11,12,21].includes(rights)){
+              if(!admUI.isT60Item(systemID))
+                accessRights[10] = true;
+              accessRights[14] = true;
+            }
+            if([10,12,20,21].includes(rights)){
+              accessRights[13] = true;
+            }
+            for(var i=0;i<15;i++)
+              MainMenu.buttons[i].enabled = accessRights[i];
+          }
+          function createMainMenu(){
+              MainMenu = new IMainMenu({imagesPath:'images/MenuImages/'});
+              MainMenu.addItems(menuItemsDef);
+              MainMenu.show();
+              if(isManagerAdmin() && !isUserManager() && !isUserAdmin()){
+                MainMenu.buttons.forEach(function(el,index){
+                  if(index > 1 && index !=9 )
+                    el.enabled = false;
+                });
+              }
+              if(isUserManager() && (!isManagerAdmin() && !isUserAdmin())){
+                MainMenu.buttons[9].enabled = false;
+              }
+              mainMenu = MainMenu;
+          }
+          function treeView(titleView){
+              TreeView = new icgLayout();
+              TreeView.top = 81;
+              TreeView.left = 1;
+              TreeView.height = window.innerHeight - TreeView.top;
+              TreeView.width = Math.ceil(window.innerWidth/2);
+              TreeView.layoutInit(/*'horizontal'*/);
+              TreeView.css.backgroundColor = '#F7F7F7';
+              TreeView.render = renderComponentsView;
+              TreeView.render();
+              var gbTreeView = new icgGroupBox({parent:TreeView,left:0,top:0,width:TreeView.width,height:TreeView.height,caption:titleView});
+              gbTreeView.font.bold =true;
+              ig = new iTreeGrid({parent:gbTreeView,top:50,left:5,columnModel:userColumnModel,callback:gridSelectChanged});
+              ig.initFunction = getData;
+              sp = new ISearchPanel({parent:gbTreeView,source:ig});
+              sp.show();
+              // ig.Init();
+              return TreeView;
+          }
+          function detaileView(){
+              DetaileView = new icgLayout();
+              DetaileView.top = 81;
+              DetaileView.left = Math.ceil(window.innerWidth/2);;
+              DetaileView.height = window.innerHeight - DetaileView.top;
+              DetaileView.width = Math.ceil(window.innerWidth/2);
+              DetaileView.layoutInit(/*'horizontal'*/);
+              DetaileView.css.backgroundColor = '#F7F7F7';
+              DetaileView.render = renderDetaileView;
+              DetaileView.render();
+          }
+          function groupView(){
+            GroupView = new icgGroupBox({parent:DetaileView,left:0,top:0,width:DetaileView.width,height:DetaileView.height,caption:'Група інформаційної системи'});
+            GroupView.font.bold = true;
+            GroupName = new icgEdit({parent:GroupView,left:100,top:45,width:GroupView.width - 106,caption:'Найменування:'});
+            GroupName.value = '';
+            GroupName.anchors.right = true;
+            GroupName.label.autosize = true;
+            GroupName.indentRight = GroupView.width - (GroupName.left + GroupName.horizontalBorderW()) - GroupName.width;
+            GroupName.readonly = true;
+          }
+          function systemView(){
+            SystemView = new icgGroupBox({parent:DetaileView,left:0,top:0,width:DetaileView.width,height:DetaileView.height,caption:'Інформаційна система'});
+            SystemView.font.bold = true;
+            SystemName = new icgEdit({parent:SystemView,left:100,top:45,width:SystemView.width - 106,caption:'Найменування:'});
+            SystemName.value = '';
+            SystemName.anchors.right = true;
+            SystemName.label.autosize = true;
+            SystemName.indentRight = SystemView.width - (SystemName.left + SystemName.horizontalBorderW()) - SystemName.width;
+            SystemName.readonly = true;
+          }
+          function componentView(){
+            ComponentView = new icgGroupBox({parent:DetaileView,left:0,top:0,width:DetaileView.width,height:DetaileView.height,caption:'Компонент доступу'});
+            ComponentView.font.bold = true;
+            ACView = ComponentView;
+            InfSysGroup =  new icgLabel({parent: ComponentView,left: 12,top: 21,width: ComponentView.width - 10,caption: '',backgroudColor: 'inherit',font: '10px/12px Segoe UI'});
+            InfSysGroup.autosize = false;
+            InfSysGroup.align = 'left';
+            InfSysGroup.anchors.right = true;
+            InfSysGroup.indentRight = 5;
+            InfSysGroup.font.bold = true;
+            InfSysGroup.font.italic = true;
+            ComponentName = new icgEdit({parent:ComponentView,left:100,top:45,width:ComponentView.width - 106,caption:'Найменування:'});
+            ComponentName.value = '';
+            ComponentName.anchors.right = true;
+            ComponentName.label.autosize = true;
+            ComponentName.indentRight = ComponentView.width - (ComponentName.left + ComponentName.horizontalBorderW()) - ComponentName.width;
+            ComponentName.readonly = true;
+            ComponentState = new icgEdit({parent:ComponentView,left:ComponentName.width + ComponentName.left - 100,top:70,width:100,caption:'Статус:'});
+            ComponentState.value = '';
+            ComponentState.label.autosize = true;
+            ComponentState.readonly = true;
+            StageConstructor = new icgGroupBox({parent:ComponentView,left:0,top:100,width:ComponentView.width,height:150,caption:'Матриця узгодження'});
+            StageConstructor.width = ComponentView.width;
+            StageConstructor.font.bold = true;
+            StageConstructor.anchors.right = true;
+            StageConstructor.indentRight = 0;
+            AccCompCommentBox = new icgGroupBox({parent:ComponentView,left:0,top:250,width:ComponentView.width,height:60,caption:'Коментар відповідального'});
+            AccCompCommentBox.font.bold = true;
+            AccCompCommentBox.anchors.right = true;
+            AccCompCommentBox.indentRight = 0;
+            acBtn =  new icgButtonImage({
+                id: 'ComfirmButton1',
+                parent: AccCompCommentBox,left: AccCompCommentBox.title.left + AccCompCommentBox.title.width + 2,top: 0,width: 16,height: 16
+            });
+            acBtn.setImages('CommitOff.png','CommitOn.png','CommitOver.png','images/MenuImages/').build().activate();
+            acBtn.visible = false;
+            AccCompComment = new icgMemo({parent:AccCompCommentBox,left:2,width:AccCompCommentBox.width - 4,top:16,height:AccCompCommentBox.height - 18});
+            AccCompComment.anchors.right = true;
+            AccCompComment.indentRight = 2;
+            AccCompComment.onChange = function(){acBtn.visible = true;}
+            acBtn.onClick = function(){
+              var component = ig.activeRow.getAttribute('data-row-id');
+              window.external.Form.View.Component.setAccCompComment(component,AccCompComment.value);
+              acBtn.visible = false;
+            }
+            RespCommentBox = new icgGroupBox({parent:ComponentView,left:0,top:310,width:ComponentView.width,height:60,caption:'Коментар виконавцю'});
+            RespCommentBox.font.bold = true;
+            RespCommentBox.anchors.right = true;
+            StageConstructor.indentRight = 0;
+            rcBtn =  new icgButtonImage({
+                id: 'ComfirmButton2',
+                parent: RespCommentBox,left: RespCommentBox.title.left + RespCommentBox.title.width + 2,top: 0,width: 16,height: 16
+            });
+            rcBtn.setImages('CommitOff.png','CommitOn.png','CommitOver.png','images/MenuImages/').build().activate();
+            rcBtn.visible = false;
+            RespComment = new icgMemo({parent:RespCommentBox,left:2,width:RespCommentBox.width - 3,top:16,height:RespCommentBox.height - 18});
+            RespComment.anchors.right = true;
+            RespComment.indentRight = 2;
+            RespComment.onChange = function(){rcBtn.visible = true;}
+            rcBtn.onClick = function(){
+              var component = ig.activeRow.getAttribute('data-row-id');
+              window.external.Form.View.Component.setRespComment(component,RespComment.value);
+              rcBtn.visible = false;
+            }
+            AccessTypes = new icgGroupBox({parent:ComponentView,left:0,top:370,width:ComponentView.width,height:150,caption:'Типи доступiв'});
+            AccessTypes.font.bold = true;
+            AccessTypes.anchors.right = true;
+            AccessTypes.indentRight = 0;
+            TypeList = new icgListBoxEx({parent:AccessTypes,left:1,width:AccessTypes.width-2,top:16,height:AccessTypes.height-18,title:'Тип доступу'});
+            // TypeList.toolBar = true;
+            TypeList.indent = 5;
+            TypeList.itemSpacing = 1;
+            TypeList.anchors.right = true;
+            TypeList.indentRight = 2;
+            TabCtrl = new icgTabControl({parent:StageConstructor,top:20,left:1,width:StageConstructor.width-2,height:StageConstructor.height-20,backgroundColor:"#F0F0F0"});
+            TabCtrl.observation = true;
+            TabCtrl.Add("Функціональне узгодження","Ознайомлення","Виконання");
+            TabCtrl.anchors.right = true;
+            TabCtrl.indentRight = 2;
+            AgreementList = new icgListBoxEx({parent:TabCtrl.sheets[0],left:1,width:TabCtrl.sheets[0].width-2,top:1,height:TabCtrl.sheets[0].height-2,title:'Виконавець/Роль'});
+            // AgreementList.toolBar = true;AgreementList PreviewList ExecutorList
+            AgreementList.indent = 5;
+            AgreementList.itemSpacing = 1;
+            AgreementList.anchors.right = true;
+            AgreementList.indentRight = 0;
+            TabCtrl.sheets[0].onChange = function(){
+              AgreementList.Redraw();
+            }
+            PreviewList = new icgListBoxEx({parent:TabCtrl.sheets[1],left:1,width:TabCtrl.sheets[1].width-2,top:1,height:TabCtrl.sheets[1].height-2,title:'Виконавець/Роль'});
+            // PreviewList.toolBar = true;
+            PreviewList.indent = 5;
+            PreviewList.itemSpacing = 1;
+            PreviewList.anchors.right = true;
+            PreviewList.indentRight = 0;
+            TabCtrl.sheets[1].onChange = function(){
+              PreviewList.Redraw();
+            }
+            ExecutorList = new icgListBoxEx({parent:TabCtrl.sheets[2],left:1,width:TabCtrl.sheets[2].width-2,top:1,height:TabCtrl.sheets[2].height-2,title:'Виконавець/Роль'});
+            // ExecutorList.toolBar = true;
+            ExecutorList.indent = 5;
+            ExecutorList.itemSpacing = 1;
+            ExecutorList.anchors.right = true;
+            ExecutorList.indentRight = 0;
+            TabCtrl.sheets[2].onChange = function(){
+              ExecutorList.Redraw();
+            }
+          }
+          return {
+              show: function(){
+                  createMainMenu();
+                  detaileView();
+                  componentView();
+                  systemView();
+                  groupView();
+                  var t2,t1 = new Date();
+                  treeView('Компоненти доступу iнформацiйних систем');
+                  t2 = new Date();
+                  document.trace('Время прорисовки (мсек):' + dateDiff(t1,t2,JST_FIELD_SECOND));
+                  createComponentMenu();
+                  createGroupMenu();
+                  createSystemMenu();
+              },
+              hide: function(){
+                if(ComponentsView.css.display != 'none')
+                  ComponentsView.css.display = 'none';
+              }
+          }
+      }());
+      function createView(){
+        window.needToLoad = [];
+        var syncISID;
+        window.syncTimeID;
+        acMahagersTools.show();
+        var data = getData(false);
+        ig.dataSet  = data;
+        ig.Init();
+        grid = document.getElementById('iTreeGrid0Data');
+        tab = grid.querySelector('table');
+        needToLoad = ig.needToAsyncLoad.reverse();
+        for(var i=0,len=ig.needToAsyncLoad.length;i<len;i++){
+          var id = ig.needToAsyncLoad[i],cx = alasql('select * from ? where ParentID = ' + id,[data]);
+          if(!cx.length)ig.table.querySelector("tr[data-row-id='" + id + "']").classList.add('empty');
+        }
+        var TreeGrid = ig;
+        var t2,t1;/*убрать после релиза*/
+        syncTimeID = setInterval(function(){
+          var ones=false;
+          if(!t1){/*убрать после релиза*/
+            t1 = new Date();
+            ones = true;
+          }/*убрать после релиза*/
+          var cur = needToLoad.length ? needToLoad.pop() : undefined;
+          if(cur){
+            ig.loadChildrenRows(cur);//передавать в качестве callback
+            if(ones){
+              mainMenu.fire({type:'onInit'});//<<<<< /*нужно как-то передавать ссылку на меня или что-то в этом роде универсальное*/
+              ig.fire({type:'onInit'});
+              ones = false
+            }
+          }
+          else{
+            clearInterval(syncTimeID);
+            t2 = new Date();/*убрать после релиза*/
+            document.trace('Сбросили интервал проверки (сек):' + dateDiff(t1,t2,JST_FIELD_SECOND));/*убрать после релиза*/
+          }
+        },10);
+      }
+      iEvents.addHandler(document, "contextmenu", function(e){
+          iEvents.preventDefault(e);
+          var gridRect = grid.getBoundingClientRect(),
+              tabRect = tab.getBoundingClientRect(),parentID,elm,eType;
+          if(window.activeMenu != null){
+              window.activeMenu.visible = false;
+          }
+          if(tabRect.height > gridRect.height){
+              if((e.clientX >= gridRect.left && e.clientX <= (gridRect.width + gridRect.left)) && (e.clientY >= gridRect.top && e.clientY <= (gridRect.height + gridRect.top))){
+                  elm = e.srcElement;
+              }
+          }
+          else{
+              if((e.clientX >= tabRect.left && e.clientX <= (tabRect.width + tabRect.left)) && (e.clientY >= tabRect.top && e.clientY <= (tabRect.height + tabRect.top))){
+                  elm = e.srcElement;
+              }
+          }
+          if(elm){
+            while(elm && elm.nodeName != 'TR' )
+                elm = elm.parentNode;
+            if(elm){
+              var mmBtnLinks,hasGroups;
+              if(elm.rowIndex!=ig.activeRow.rowIndex){
+                if(elm.classList.contains('grid-indenter')){
+                  ig.fire({type:'onBranchStateChenge',rowIndex:elm.rowIndex});
+                }
+                ig.fire({type:'onSetActiveRow',rowIndex:elm.rowIndex});
+              }
+              eType = elm.dataset.itemType;
+              var mX = e.clientX,mY = e.clientY;
+              switch(eType){
+                case 'component':
+                  if((window.innerHeight - e.clientY) < cMenu.height)
+                    mY = e.clientY - cMenu.height - 2;
+                  if((window.innerWidth - e.clientX) < cMenu.width)
+                    mX = e.clientX - cMenu.width - 2;
+                  cMenu.moveTo(mX,mY);
+                  cMenu.component = parseInt(elm.dataset.rowId);
+                  parentID = document.querySelector("tr[data-row-id='" + cMenu.component + "']").dataset.parentId;
+                  var parentRow = ig.treeView.tree[parentID].row;
+                  if(parentRow.dataset.parentId != '0'){
+                    cMenu.group = parentID;
+                    cMenu.system = parseInt(parentRow.getAttribute('data-parent-id'));
+                  }
+                  else{
+                    cMenu.group = 0;
+                    cMenu.system = parentID;
+                  }
+                  hasGroups = alasql("select RowID FROM ? where ParentID = " + cMenu.system +" and ItemType = 'group'",[ig.dataSet]);
+                  mmBtnLinks = componentMenuMainMenuLinks;
+                  cMenu.items.forEach(function(elm,index){
+                    var btnIndex = mmBtnLinks[index];
+                    if(btnIndex>=0)
+                      elm.enabled = mainMenu.buttons[btnIndex].enabled;
+                  });
+                  if(hasGroups.length)cMenu.items[4].enabled = true
+                  else cMenu.items[4].enabled = false;
+                  cMenu.Show();
+                  break;
+                case 'group':
+                  if((window.innerHeight - e.clientY) < gMenu.height)
+                    mY = e.clientY - gMenu.height - 2;
+                  if((window.innerWidth - e.clientX) < gMenu.width)
+                    mX = e.clientX - gMenu.width - 2;
+                  gMenu.moveTo(mX,mY);
+                  gMenu.component = 0;
+                  gMenu.group = parseInt(elm.getAttribute('data-row-id'));
+                  gMenu.system = parseInt(elm.getAttribute('data-parent-id'));
+                  mmBtnLinks = groupMenuMainMenuLinks;
+                  gMenu.items.forEach(function(elm,index){
+                    var btnIndex = mmBtnLinks[index];
+                    if(btnIndex>=0)
+                      elm.enabled = mainMenu.buttons[btnIndex].enabled;
+                  });
+                  gMenu.Show();;
+                  break;
+                case 'system':
+                  if((window.innerHeight - e.clientY) < sMenu.height)
+                    mY = e.clientY - sMenu.height - 2;
+                  if((window.innerWidth - e.clientX) < sMenu.width)
+                    mX = e.clientX - sMenu.width - 2;
+                  sMenu.moveTo(mX,mY);
+                  sMenu.system = parseInt(elm.getAttribute('data-row-id'));
+                  sMenu.group = 0;
+                  sMenu.component = 0;
+                  mmBtnLinks = systemMenuMainMenuLinks;
+                  sMenu.items.forEach(function(elm,index){
+                    var btnIndex = mmBtnLinks[index];
+                    if(btnIndex>=0)
+                      elm.enabled = mainMenu.buttons[btnIndex].enabled;
+                  });
+                  sMenu.Show();
+                  break;
+              }
+            }
+          }
+      });
+      iEvents.addHandler(document, "click", function(e){
+        if(window.activeMenu != null)
+          window.activeMenu.Hide();
+      });
+    </script>
+  </body>
+</html>

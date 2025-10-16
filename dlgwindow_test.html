@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Проэкт Заявка на доступ Выбор компонентов доступа</title>
+    <meta NAME="Author" CONTENT="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="JSTools/JavaScriptUtil.js"></script>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="core/iLib.core.js"></script>
+    <script src="dialogWindow.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ITreeGrid.css">
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+  </head>
+  <body>
+    <div data-dlgwin-options='{"title":"Обгрунтування","width":"350","height":"150","showOnStart":false}' id="textbox"></div>
+    
+    <script>
+      var sp,ig,TreeView,grid,tab,textbox;
+      initWindow();//метод должен быть выполнен 1 раз после загрузки страницы
+
+      function initWindow(){
+        textbox = new dlgWindow(document.getElementById("textbox"),{"contentType":"textbox","sizeLinit":1024 ,"isDrag":false, "height":150,"width":350}).init();
+        textbox.dialogShow();
+      }
+    </script>
+  </body>
+</html>

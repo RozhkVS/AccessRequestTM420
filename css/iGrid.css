@@ -1,0 +1,491 @@
+a:link{
+  color: #0066CC;
+}
+a:visited{
+  color: #0066CC;
+}
+.igrid {
+  background: #F0F0F0 url(images/bg-table-thead.png) repeat-x top left;
+  border: 0px solid #eee;
+  position: relative;
+}
+
+.igrid div.divHead {
+  background: #F0F0F0 url(images/bg-table-thead.png) repeat-x top left;
+  position: relative;
+  font-weight: normal;
+  border: 1px solid #ccc;
+  border-bottom: 0px;
+  overflow: hidden;
+}
+
+.igrid div.divHead table {
+  font-weight: 100;
+}
+
+.igrid div.divHeadBox {
+  float: left;
+  padding-right: 40px;
+}
+
+.igrid div.divHead th{
+  text-align: left;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #fff;
+  overflow: hidden;
+  vertical-align: top !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.igrid div.divHead td {
+  text-align: left;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #fff;
+  overflow: hidden;
+  vertical-align: top !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.igrid div.divHead th div  {
+  padding: 4px;
+  border-left: 0px solid #fff;
+}
+
+.igrid div.divHead th{
+  font-size: 1.1em;
+  height: 21px;
+  cursor: default;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.igrid div.divHead th div.ibutton {
+  margin: 3px 1px 2px 0px;
+  padding: 0;
+  border: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  background-image: url("images/mask.png");
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+
+.igrid div.divBody {
+	background: #FFF;
+	position: relative;
+	font-weight: normal;
+	border: 1px solid #ccc;
+	border-top: 0px;
+	overflow: auto;
+}
+
+.igrid div.divBody table {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
+}
+
+.igrid div.divBody th{
+  text-align: left;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #fff;
+  overflow: hidden;
+  vertical-align: top !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.igrid div.divBody td{
+	text-align: left;
+	border-right: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #fff;
+	overflow: hidden;
+	vertical-align: top !important;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.igrid div.divBody td {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.igrid div.divBody td div {
+	padding: 4px;
+	border-left: 0px solid #fff;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.igrid div.divBody th div  {
+  padding: 4px;
+  border-left: 0px solid #fff;
+  font-weight: 400;
+  font-size: 1.1em;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.igrid div.divBody th{
+	height: 21px;
+	cursor: default;
+	white-space: nowrap;
+	overflow: hidden;
+  background: #F0F0F0 url(images/bg-table-thead.png) repeat-x top left;
+}
+
+.igrid div.divBody td div {
+    border-top: 0px solid #fff;
+    padding-bottom: 4px;
+}
+
+.igrid div.toolBar /*toolbar*/ {
+	background: #fafafa url(images/bg.gif) repeat-x top;
+	position: relative;
+	border: 1px solid #ccc;
+	border-bottom: 0px;
+	overflow: hidden;
+}
+
+.igrid div.divToolBar {
+	float: left;
+	clear: both;
+	padding: 1px;
+	margin-top: 2px;
+}
+
+.igrid div.btnseparator {
+	float: left;
+	height: 22px;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #fff;
+	margin: 1px;
+}
+
+.igrid div.fbutton {
+	float: left;
+	display: block;
+	cursor: default;
+	padding: 0px;
+	border: 1px solid #B4B4B4;
+}
+
+.igrid div.fbutton .add {
+	background: url(images/add.png) no-repeat center left;
+}
+
+.igrid div.fbutton .delete {
+		background: url(images/close.png) no-repeat center left;
+}
+
+.igrid div.fbutton .edit {
+	background: url(images/edit.png) no-repeat center left;
+}
+
+.igrid div.fbutton .action {
+	background: url(images/ddn.png) no-repeat center left;
+}
+
+.igrid div.fbutton div {
+	float: left;
+	padding: 0px 2px;
+	border-left: 1px solid #fff;
+	border-top: 1px solid #fff;
+	border-right: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+}
+
+.igrid div.fbutton span {
+	float: left;
+	display: block;
+	padding: 3px;
+}
+
+.igrid div.divBody table tr.selected {
+  background-color: #3875d7;
+  color: #fff;
+}
+
+.igrid div.divBody td div span.indenter {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 19px;
+}
+
+.igrid div.divBody td div span.indenter a {
+  background-position: left center;
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 19px;
+
+}
+.igrid div.divBody tr.collapsed.selected span.indenter a {
+  background-image: url(images/expand-light.png);
+}
+
+.igrid div.divBody tr.expanded.selected span.indenter a {
+  background-image: url(images/collapse-light.png);
+}
+
+.igrid div.divBody tr.accept {
+  background-color: #a3bce4;
+  color: #fff
+}
+
+.igrid div.divBody tr.collapsed.accept span.indenter a {
+  background-image: url(images/expand-light.png);
+}
+
+.igrid div.divBody tr.expanded.accept span.indenter a {
+  background-image: url(images/collapse-light.png);
+}
+.igrid div.divBody td div span.checkbox {
+  padding: 0 0 0 1.5em;
+}
+
+.igrid div.divBody tr.collapsed span.indenter a {
+  background-image: url(images/expand.png);
+}
+
+.igrid div.divBody tr.expanded span.indenter a {
+  background-image: url(images/collapse.png);
+}
+
+.igrid div.divBody tr.branch {
+  background-color: #f9f9f9;
+}
+
+.igrid div.divBody tr.selected {
+  color: #fff;
+}
+
+pre.listing {
+  background: #eee;
+  border: 1px solid #ccc;
+  margin: .6em 0 .3em 0;
+  padding: .1em .3em;
+}
+
+pre.listing b {
+  color: #f00;
+}
+
+.igrid div.divBody td div span.checkbox {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 19px;
+}
+
+.igrid div.divBody td div span.checkaccept {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 100%;
+}
+
+.igrid div.hGrip {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 5px;
+  width: 5px;
+  margin-right: 1px;
+  cursor: col-resize
+}
+
+.igrid div.divBody td div span.checkbox a {
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 13px;
+  height: 13px;
+  margin-right: 5px;
+}
+
+.igrid div.divBody td div span.checkaccept a {
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 13px;
+  height: 13px;
+  margin-right: 5px;
+}
+
+.igrid div.divBody tr span.checkbox a {
+  background-image: url("images/unchecked.gif");
+  width: 13px;
+  height: 13px;
+}
+
+.igrid div.divBody tr span.checkaccept a {
+  background-image: url("images/unchecked.gif");
+  width: 13px;
+  height: 13px;
+}
+
+.igrid div.divBody tr span.checkbox.checked a
+{
+  background-image: url("images/checked.gif");
+  width: 13px;
+  height: 13px;
+}
+
+.igrid div.divBody tr span.checkaccept.checked a
+{
+  background-image: url("images/checked.gif");
+  width: 13px;
+  height: 13px;
+}
+
+.igrid div.divBody tr span.checkbox
+{
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 16px;
+}
+.igrid div.divBody tr span.checkbox
+{
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 16px;
+}
+
+.igrid div.divBody tr span.checkaccept
+{
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+  width: 16px;
+}
+.igrid div.divBody tr.leaf td div.ibutton:hover {
+  margin: 3px 1px 2px 0px;
+  padding: 0;
+  border: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  background-image: url("images/lb_hover_0.png");
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+
+.igrid div.divBody tr.branch td div.ibutton {
+  margin: 4px 1px 3px 0px;
+  padding: 0;
+  border: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+
+.igrid div.divBody tr.leaf td div.ibutton {
+  margin: 3px 1px 2px 0px;
+  padding: 0;
+  border: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  background-image: url("images/lb_off_1.png");
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+
+div.dlgwin td div span.itemtext {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  height: 12px;
+  line-height: 100%;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+div.dlgwin td div span.itemcheck {
+  margin: 0;
+  padding-right: 3px;
+  text-align: right;
+  user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -webkit-user-select: none;
+}
+
+div.dlgwin td div span.itemcheck a {
+  background-repeat: no-repeat;
+  display: inline-block;
+  text-decoration: none;
+  width: 13px;
+  height: 13px;
+}
+
+div.dlgwin tr span.itemcheck a {
+  background-image: url("images/unchecked.gif");
+}
+
+div.dlgwin tr span.itemcheck.checked a
+{
+  background-image: url("images/checked.gif");
+}

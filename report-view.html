@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+		<meta http-equiv="X-UA-Compatible" content="IE=11">
+		<title>refCardDispatcher</title>
+		<script src="reportview.js"></script>
+		<style TYPE="TEXT/CSS">
+			html{
+				-ms-content-zooming: none;
+			}
+			body {
+				margin: 0px;
+				padding: 0px;
+				border:0px;
+				width:110%;
+				height:100%;
+				background: #FEFEFE;
+				font-family:Segoe UI;
+				font-size:12px;
+				line-height:100%;
+				overflow-x: hidden;
+				overflow-y: auto;
+			}
+			th.title{
+				font-size: 12px;
+				font-weight: bold;
+				background-color: rgb(31, 150, 207);
+				color: white;
+				background-image: url(bg.png);
+				background-repeat: repeat-x;
+			}
+			td.stage div{
+				font-size: 12px;
+				font-weight: bold;
+				margin-left: 5px;
+				background-color: rgb(181 234 216);
+				color: rgb(0, 0, 0);
+				background-image: url(bg.png);
+				background-repeat: repeat-x;
+			}
+			td.fields div{
+				font-size: 12px;
+				font-style: italic;
+				font-weight: bold;
+				margin-left: 10px;
+				background-color: rgb(226, 243, 251);
+				color: rgb(0, 0, 0);
+				background-image: url(bg.png);
+				background-repeat: repeat-x;
+			}
+		</style>
+	</head>
+	<body onload="show()">
+		<table cellpadding=0; cellspacing=0 unselectable=on style="user-select: none; border-collapse: collapse; width: 100%;"></table>
+		<script>
+			function show(){
+				var data = JSON.parse(window.external.Form.View.Component.Requisites("Params").AsString),
+				    groupsOptions = JSON.parse(window.external.Form.View.Component.Requisites("Text").AsString),
+					sourceTab = document.querySelector('TABLE'),
+					sourceItems = new ItemsView(data,groupsOptions);
+				sourceTab.innerHTML = sourceItems.getSource();
+			}
+		</script>
+	</body>
+</html>

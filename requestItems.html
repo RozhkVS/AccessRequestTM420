@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Проэкт Заявки на доступ Список компонентов заявки на доступ</title>
+    <meta name="Author" content="Дубовик Д.М. ООО АТБ-Маркет">
+    <meta http-equiv="Content-Type" content="text/html; CHARSET=window-1251">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <script src="vendor/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ITreeGrid.css">
+    <link rel="stylesheet" type="text/css" href="css/ILibView.css">
+    <script src="ILIB.js"></script>
+  </head>
+  <body>
+    <script>
+      var MainMenu,TreeGrid,cardState;
+      var userColumnModel = [
+        { field: "ItemName",    width:150, display: "Найменування",  dataType: "string", size: "autofit",showHint: false},
+        { field: "AccessTypes", width:150, display: "Типи доступiв", dataType: "string", size: "autofit",showHint: true},
+        { field: "Description", width:150, display: "Обгрунтування", dataType: "string", size: "autofit",showHint: true}
+      ];
+      var menuItemsDef = [
+        {caption:"Розгорнути все",enabledImage:'expand-all.png',disabledImage:'expand-all-disabled.png',command:tvExpandAll},
+        {caption:"Згорнути все",enabledImage:'collaps-all.png',disabledImage:'collaps-all-disabled.png',command:tvCollapseAll},
+        {caption:'Додати/вилучити компоненти',enabledImage:'access-types.png',disabledImage:'access-types-disabled.png',command:tvSelectComponent}
+      ];
+      function tvNodesState(){
+        if(arguments.length)
+          if(arguments[0])
+            TreeGrid.expandAll()
+          else TreeGrid.collapseAll();
+      }
+      function tvExpandAll(){
+        TreeGrid.expandAll();
+      };
+      function tvCollapseAll(){
+        TreeGrid.collapseAll();
+      };
+      function targetModelAsString(mode){
+        var strData;
+        switch(mode){
+        case 'new':
+          strData = JSON.stringify(targetModel());
+          break;
+        case 'old':
+          strData = JSON.stringify(admUI.Environment.PopVar('oldTargetModel'));
+          break;
+        default: strData = {};
+        }
+        return strData;
+      }
+      function tvSelectComponent(){
+        var res,cardState,oldData,newData;
+        res = admUI.OnExecute_getData();
+        if(res){
+          oldData = targetModelAsString('old');
+          refereshView(true);
+          newData = targetModelAsString('new');
+          if(oldData != newData){
+            admUI.Requisites("OnChange").Value = 1;
+            // refereshView(true);
+            // var ct = admUI.Environment.PopVar('ChangesTable'),
+            //     ot = admUI.Environment.PopVar('OutputSelected');
+            // setTimeout(admUI.dataDelete,10,ct,ot);
+            // setTimeout(admUI.dataAppend,10,ct,ot);
+            // setTimeout(admUI.dataUpdateTypes,10,ct,ot);
+            // setTimeout(admUI.dataUpdateDesc,10,ct,ot);
+            // setTimeout(admUI.setControlState,10,ct,ot);
+            //admUI.setControlState();
+          }
+        }
+      };
+      function renderComponentsView(){
+        this.height = window.innerHeight - this.top;
+        this.width = window.innerWidth;
+        if(this.children.length == 1){
+          this.children[0].width = this.width;
+          this.children[0].height = this.height;
+        }
+      };
+      function gridSelectChanged(event){
+        return true;
+      };
+      function createMainMenu(){
+        MainMenu = new IMainMenu({imagesPath:'images/MenuImages/'});
+        MainMenu.addItems(menuItemsDef);
+        MainMenu.show();
+      }
+      var getData = function(){
+        var data,result = new String(),rs;
+        try{
+          rs = admUI.getData();
+          if(rs.Active){
+            while(!rs.EOF){
+              result += rs.FieldByIndex(0).Value;
+              rs.Next();
+            }
+            rs.Close;
+          }
+        }
+        catch(err){
+          alert(err.message);
+        }
+        return result.length ? JSON.parse(result) : undefined;
+      }
+      function createTreeView(){
+        createMainMenu();
+        var titleView = 'Перелік необхідних доступів';
+        var TreeView = new icgLayout();
+        TreeView.top = 79;
+        TreeView.left = 1;
+        TreeView.height = window.innerHeight - TreeView.top;
+        TreeView.width = window.innerWidth;
+        TreeView.layoutInit(/*'horizontal'*/);
+        TreeView.css.backgroundColor = '#F7F7F7';
+        TreeView.render = renderComponentsView;
+        TreeView.render();
+        var gbTreeView = new icgGroupBox({parent:TreeView,left:0,top:0,width:TreeView.width,height:TreeView.height,caption:titleView});
+        gbTreeView.font.bold =true;
+        TreeGrid = new iTreeGrid({parent:gbTreeView,top:21,left:5,columnModel:userColumnModel,callback:gridSelectChanged});
+        TreeGrid.InitFunction = getData;
+        TreeGrid.RowDataBuilder = createRowData;
+      }
+      function createRowData(rowData,dataSet){
+        var data = {};
+        data.ItemName = rowData.ItemName;
+        data.AccessTypes = rowData.AccessTypes;
+        data.Description = rowData.Description;
+        data.PathStr = rowData.PathStr;
+        data.ItemType = rowData.ItemType;
+        data.Level = rowData.Level;
+        return data;
+      }
+      function targetModel(){
+        var item,
+            targetItems = new Array(),
+            nodes = TreeGrid.treeView.nodes,
+            len = nodes.length;
+        for(var i=0;i<len;i++){
+          if(!nodes[i].hasChildren()){
+            item = nodes[i].toJSON();
+            targetItems.push(JSON.parse(item));
+          }
+        }
+        return targetItems;
+      }
+      function getCurrFilter(){
+        var arr = [];
+        if(TreeGrid.treeView.roots.length){
+          for(var i=0,len=TreeGrid.treeView.roots.length;i<len;i++){
+            arr.push(parseInt(TreeGrid.treeView.roots[i].id));
+          }
+          admUI.Environment.SetVar("CurrFilter",arr);
+        }
+        return arr;
+      }
+      function createSelectedDataTable(alias){
+        admUI.insertSelectedData(alias);
+        // var arr = targetModel();
+        // arr.forEach(function(el){
+        //   admUI.insertSelectedData(alias,el.ID,el.AccessTypes||'',el.Description||'',el.PathStr);
+        // })
+      }
+      function getMemoryData(){
+        var data,result = new String(),rs;
+        try{
+          rs = admUI.getMemoryData();
+          if(rs.Active){
+            while(!rs.EOF){
+              result += rs.FieldByIndex(0).Value
+              rs.Next();
+            }
+            rs.Close;
+          }
+        }
+        catch(err){
+          alert(err.message);
+        }
+        return result.length ? JSON.parse(result) : undefined;
+      }
+      function dataLoad(){
+        var needToLoad = TreeGrid.needToAsyncLoad.reverse(),len  = needToLoad.length,
+            cardState = admUI.Requisites("AccRequestState").Value;
+        for(var i=0;i<len;i++){
+          var curRootId = needToLoad.pop();
+          if(curRootId) TreeGrid.loadChildrenRows(curRootId);
+        }
+        MainMenu.buttons[0].enabled = true;
+        MainMenu.buttons[1].enabled = true;
+        if('DraftReadyReject'.includes(cardState))
+          MainMenu.buttons[2].enabled = true;
+        TreeGrid.expandAll();
+      }
+      function refereshView(mode){
+        var res,data,cdata,isArr = getCurrFilter();
+        if(admUI.Modified||mode)
+          data = getMemoryData()
+        else data = getData();
+        if(!data){
+          MainMenu.buttons[2].enabled = true;
+          MainMenu.buttons[0].enabled = false;
+          MainMenu.buttons[1].enabled = false;
+          for(var i=0,len=isArr.length;i<len;i++){
+            TreeGrid.rootItemUnload(isArr[i]);
+          }
+          return;
+        }
+        for(var i=0,len=isArr.length;i<len;i++){
+          TreeGrid.rootItemUnload(isArr[i]);
+        }
+        TreeGrid.dataSet = data;
+        TreeGrid.Init();
+        if(TreeGrid.needToAsyncLoad){
+          dataLoad();
+          cardState = admUI.Requisites("AccRequestState").Value;
+          if(!'DraftReady'.includes(cardState)){
+            for(var i=0,len=data.length;i<len;i++){
+              if(data[i].ItemType=='component')
+                if(data[i].Resolution==0)
+                  TreeGrid.treeView.tree[data[i].ID].row.cells[0].querySelector('span').style.textDecoration = "line-through";
+            }
+          }
+        }
+      }
+      function disabledSelectInfSysButton(){
+        MainMenu.buttons[2].enabled = false;
+      }
+      function createView(){
+        refereshView();
+        if(admUI.Inserted){
+          MainMenu.fire({type:'onInit'});
+          MainMenu.buttons[0].enabled = false;
+          MainMenu.buttons[1].enabled = false;
+        }
+      };
+      iEvents.addHandler(window,"load",function(event){
+        cardState = admUI.Requisites("AccRequestState").Value;
+        createTreeView();
+        createView();
+      });
+      iEvents.addHandler(document, "keydown", function(e){
+        if(e.ctrlKey && e.keyCode == 70){
+          iEvents.preventDefault(e);
+          return false;
+        }
+      });
+      iEvents.addHandler(document, "contextmenu", function(e){
+        iEvents.preventDefault(e);
+      });
+    </script>
+  </body>
+</html>

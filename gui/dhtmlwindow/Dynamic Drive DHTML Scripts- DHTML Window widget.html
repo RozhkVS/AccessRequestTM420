@@ -1,0 +1,683 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="description" content="Click here for a window script constructed using pure DHTML" />
+<meta name="keywords" content="DHTML, window, iframe, frames, drag drop" />
+<title>Dynamic Drive DHTML Scripts- DHTML Window widget</title>
+
+<link rel="stylesheet" href="windowfiles/dhtmlwindow.css" type="text/css" />
+
+<script type="text/javascript" src="windowfiles/dhtmlwindow.js">
+
+/***********************************************
+* DHTML Window Widget- © Dynamic Drive (www.dynamicdrive.com)
+* This notice must stay intact for legal use.
+* Visit http://www.dynamicdrive.com/ for full source code
+***********************************************/
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="../../ddincludes/mainstyle.css" />
+
+</head>
+
+<body>
+
+<script src="http://www.dynamicdrive.com/ddincludes/scripts.js"></script>
+
+
+<div id="topsection">
+
+
+<a href="http://www.dynamicdrive.com" title="Dynamic Drive DHTML and CSS code library"><img id="ddlogo" src="http://www.dynamicdrive.com/ddincludes/ddlogo.png" style="border-width:0" /></a>
+
+<div id="topsplitmenu">
+<a id="ddhomeicon" href="http://www.dynamicdrive.com/new.htm" title="Dynamic Drive"><img src="http://www.dynamicdrive.com/ddincludes/home.png" style="width:32px; height:auto; border:0" /></a>
+<a href="http://www.dynamicdrive.com/new.htm" class="sb"><span class="innerspan">New</span></a>
+<a href="http://www.dynamicdrive.com/revised.htm" class="sb"><span class="innerspan">Revised</span></a>
+<a href="http://www.dynamicdrive.com/style/" class="sb"><span class="innerspan">CSS Library</span></a><a class="downtoggler dedicatedtoggler hasdropdown" rel="dropmenucsslib[click]"><span class="innerspan downarrow"> </span></a>
+<a href="http://www.dynamicdrive.com/forums/" class="sb"><span class="innerspan">Forums</span></a>
+<a href="http://tools.dynamicdrive.com" class="sb"><span class="innerspan">Web Tools</span></a><a class="downtoggler dedicatedtoggler hasdropdown" rel="dropmenutools[click]"><span class="innerspan downarrow"> </span></a>
+
+</div>
+
+
+<div id="toprightdivbox">
+
+<img id="mobilesearchtoggle" src="http://www.dynamicdrive.com/ddincludes/magnify.gif" />
+
+<form id="topform" method="get" action="http://www.dynamicdrive.com/search/search.php">
+<input type="text" name="zoom_query" id="zoom_query" size="20" class="zoom_searchbox topsearchbox" placeholder="search" />
+<input id="query_submit" type="image" src="http://www.dynamicdrive.com/ddincludes/magnify.gif" />
+
+<input name="zoom_per_page" id="zoom_per_page" type="hidden" value="10" />
+<input name="zoom_and" id="zoom_and" type="hidden" value="1" />
+<input type="hidden" name="zoom_sort" value="0" />
+</form>
+
+<div><a href="http://www.dynamicdrive.com/faqs.htm">FAQs</a> <a href="http://www.dynamicdrive.com/award/">Awards</a> <a href="http://www.dynamicdrive.com/notice.htm">Usage Terms</a> <a href="http://www.dynamicdrive.com/contact.htm">Contact</a> </div>
+
+</div>
+
+<div style="margin:auto; clear:both"><script type="text/javascript" src="http://www.dynamicdrive.com/ddincludes/adbanner.js?refresh=2"></script></div>
+
+
+</div>
+
+
+<!-- Drop Down #1 -->
+
+<ul id="dropmenucsslib" class="dd_splitdropdown">
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/all/" class="title">CSS Codes</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C1/">Horizontal CSS Menus</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C2/">Vertical CSS Menus</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C4/">Image CSS</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C6/">Form CSS</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C5/">DIVs and containers</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C7/">Links &amp; Buttons</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C17/">CSS3 demos</a></li>
+<li><a href="http://www.dynamicdrive.com/style/csslibrary/category/C8/">Other</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/" class="title">CSS Layouts</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/category/C9/">Two Columns</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/category/C10/">Three Columns</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/category/C12/">Fixed layouts</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/category/C13/">Liquid Layouts</a></li>
+<li><a href="http://www.dynamicdrive.com/style/layouts/category/C11/">CSS Frames</a></li>
+</ul>
+
+<!-- Drop Down #2 -->
+
+<ul id="dropmenutools" class="dd_splitdropdown">
+				<li><a href="http://tools.dynamicdrive.com/imageoptimizer/">Image Optimizer</a></li>
+				<li><a href="http://tools.dynamicdrive.com/favicon/">FavIcon Generator</a></li>
+				<li><a href="http://tools.dynamicdrive.com/faviconeditor/">FavIcon Editor <span style="color:red">new</span></a></li>
+				<li><a href="http://tools.dynamicdrive.com/animatedgif/">Animated Gif</a></li>
+				<li><a href="http://www.dynamicdrive.com/emailriddler/">Email Riddler</a></li>
+        <li><a href="http://tools.dynamicdrive.com/password/">.htaccess Password</a></li>
+				<li><a href="http://tools.dynamicdrive.com/userban/">.htaccess Banning</a></li>
+        <li><a href="http://tools.dynamicdrive.com/gradient/">Gradient Image</a></li>
+        <li><a href="http://tools.dynamicdrive.com/button/">Button Maker</a></li>
+				<li><a href="http://tools.dynamicdrive.com/ribbon/">Ribbon Rules</a></li>
+				<li><a href="http://tools.dynamicdrive.com/listscrubber/">List Scrubber Tool</a></li>
+				<li><a href="http://www.ddwhois.com/">DD Whois Service</a></li>
+</ul>
+
+<script>
+ddsplitmenu.init("hasdropdown")
+</script>
+
+<p id="pathlinks"><a href="http://www.dynamicdrive.com/">Home</a> 
+<img border="0" src="../../ddincludes/arrow2.gif" width="8" height="10" />                                                        
+<a href="http://www.dynamicdrive.com/dynamicindex8/">Browser window</a> 
+<img border="0" src="../../ddincludes/arrow2.gif" width="8" height="10" />                                                        Here</p>
+
+<table id="maintable" border="0" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td id="leftbar" valign="top">
+			<div class="headers">Categories</div>
+			<ul class="categorylinks">
+				<li id="c7"><a href="http://www.dynamicdrive.com/dynamicindex7/" >Calendars</a></li>
+				<li id="c6"><a href="http://www.dynamicdrive.com/dynamicindex6/">Date &amp; Time</a></li>
+				<li id="c3"><a href="http://www.dynamicdrive.com/dynamicindex3/">Document Effects</a></li>
+				<li id="c17"><a href="http://www.dynamicdrive.com/dynamicindex17/">Dynamic Content</a></li>
+				<li id="c16"><a href="http://www.dynamicdrive.com/dynamicindex16/">Form Effects</a></li>
+				<li id="c12"><a href="http://www.dynamicdrive.com/dynamicindex12/">Games</a></li>
+				<li id="c4"><a href="http://www.dynamicdrive.com/dynamicindex4/">Image Effects</a></li>		
+				<li id="c5"><a href="http://www.dynamicdrive.com/dynamicindex5/">Links &amp; Tooltips</a></li>			
+				<li id="c1"><a href="http://www.dynamicdrive.com/dynamicindex1/">Menus &amp; Navigation</a></li>
+				<li id="c13"><a href="http://www.dynamicdrive.com/dynamicindex13/">Mouse and Cursor</a></li>			
+				<li id="c2"><a href="http://www.dynamicdrive.com/dynamicindex2/">Scrollers</a></li>
+				<li id="c10"><a href="http://www.dynamicdrive.com/dynamicindex10/">Text Animations</a></li>
+				<li id="c9"><a href="http://www.dynamicdrive.com/dynamicindex9/">User/System Preference</a></li>
+				<li id="c8"><a href="http://www.dynamicdrive.com/dynamicindex8/">Window and Frames</a></li>
+				<li id="c11"><a href="http://www.dynamicdrive.com/dynamicindex11/">Other</a></li>
+				<li id="c18"><a href="http://www.dynamicdrive.com/dynamicindex18/">XML and RSS</a></li>
+			</ul>
+
+
+
+
+			<div class="headers" style="clear:both">Other Sections</div>
+			<ul class="categorylinks diffpointer">
+				<li><a href="http://www.dynamicdrive.com/forums/">Script Forums</a></li>
+				<li><a href="http://www.dynamicdrive.com/recommendit/">Recommend Us</a></li>
+				<li><a href="http://www.dynamicdrive.com/notice.htm">Usage Terms</a></li>
+				<li><a href="http://www.javascriptkit.com">Free JavaScripts</a></li>		
+			</ul>
+
+
+<div>
+
+Bookmark <b><script type="text/javascript">document.write(ddscripttitle)</script></b> to <a href="http://www.dynamicdrive.com/bookmark.php?site=deli" onClick="return jsenabledmark('deli')" rel="nofollow">del.icio.us</a>
+</div>
+
+
+<div style="text-align:center; margin-top: 1em;">
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- DD left side bar -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:120px;height:240px"
+     data-ad-client="ca-pub-7051847089736268"
+     data-ad-slot="6514446636"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+</div>
+
+    </td>
+    <td id="spacertd">
+<img src="../../spacer.gif" id="spacergif">
+    </td>
+    <td valign="top" id="contentarea">
+    
+<script type="text/javascript">
+if (showincontentheader)
+document.write('<div id="topbanner" align="left">'+revised_ranban[ran_num]+'</div>')
+</script>
+
+<!-- AddThis Button BEGIN -->
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=georgeuser" async="async"></script>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+
+<div class="addthis_sharing_toolbox" style="float:right"></div>
+<!-- AddThis Button END -->
+
+<br style="clear:right" />
+
+
+<div id="scriptheader"><span class="compatlist">FF1+ IE6+ Opera 8+</span> 
+  <h3>DHTML Window widget (v1.1)</h3></div> 
+<div id="scriptheaderFoot"><span class="rightit"></span> <b>Author:</b>  
+  <span id="ddauthor">Dynamic Drive</span></div>
+
+      <p align="left"><b>Note:</b>
+      Last updated Oct 29th, 07 to v1.1. See
+      <a href="changelog.txt">changelog</a>.</p>
+      <p align="left"><strong>Description: </strong>This is a robust DHTML 
+      Window widget that replicates the look and functionality of a&nbsp;traditional 
+      pop-up window, minus the intrusiveness. Drag or resize the window widget on the page, minimize or 
+      close it, load a new page into it, or spawn whole new windows just as you 
+      would with popups. It's a modern, Web 2.0 alternative to pop-up windows 
+      that's less intrusive, less prone to being blocked, and much more 
+      customizable. Here are some highlights:</p>
+<ul>
+  <li>
+  Window interface created using DIVs and styled via CSS, making 
+  its interface highly customizable.</li>
+  <li>
+  Four types of content supported within each window: <font color="#FF0000">1)</font> Inline 
+  Text, <font color="#FF0000">2)</font> HTML from an invisible DIV on the page, 
+  <font color="#FF0000">3)</font> An external page shown inside an IFRAME, or <font color="#FF0000">4)</font> An external page 
+  on the same site fetched via Ajax.</li>
+  <li>
+  Specify various display attributes when opening a new window, 
+  such as its dimension, position on the page, and whether it's resizable or 
+  scrollable.</li>
+  <li>
+  Spawn multiple windows on the page, such as via links or 
+  automatically.</li>
+  <li>
+  Various methods supported to manipulate each window after it's 
+  been spawned, such as changing the content/page displayed, resizing or moving 
+  its position on the page.</li>
+  <li>
+  A single custom event handler &quot;<code>onclose</code>&quot; 
+  is also supported to let you run custom code when a window is closed (such as 
+  &quot;prompt&quot; the user whether he really wants to close it).</li>
+  <li>
+  Script tested in Firefox 1.5/2.x+, IE6+, Opera 8+, and Safari 
+  2.</li>
+</ul>
+      <p align="left"><b>Demos:</b>&nbsp;
+      <!--webbot bot="HTMLMarkup" startspan --><script type="text/javascript">
+
+<!-- 1) DHTML Window 1 Script: -->
+var googlewin=dhtmlwindow.open("googlebox", "iframe", "http://bing.com", "#1: Bing Web site", "width=590px,height=350px,resize=1,scrolling=1,center=1", "recal")
+
+googlewin.onclose=function(){ //Run custom code when window is being closed (return false to cancel action):
+return window.confirm("Close window 1?")
+}
+<!-- 2) DHTML Window Script 2: -->
+
+var inlinewin=dhtmlwindow.open("broadcastbox", "inline", "This is some inline content. <a href='http://dynamicdrive.com'>Dynamic Drive</a>", "#2: Broadcast Title", "width=300px,height=120px,left=150px,top=10px,resize=1,scrolling=0", "recal")
+
+<!-- 3) DHTML Window 3 Script: -->
+
+function openmypage(){ //Define arbitrary function to run desired DHTML Window widget codes
+ajaxwin=dhtmlwindow.open("ajaxbox", "ajax", "windowfiles/external.htm", "#3: Ajax Win Title", "width=450px,height=300px,left=300px,top=100px,resize=1,scrolling=1")
+ajaxwin.onclose=function(){return window.confirm("Close window 3?")} //Run custom code when window is about to be closed
+}
+
+</script>
+
+<div id="somediv" style="display:none">
+<p style="height: 400px">This is some content within a DIV, shown inside this window instead</p>
+</div><!--webbot bot="HTMLMarkup" endspan i-checksum="2838" --></p>
+<table border="0" width="100%" cellspacing="5" cellpadding="0">
+  <tr>
+    <td valign="top" width="50%">
+    <h4 style="font-size: 14px; background-color: #E1EFAF">Window 1 (iframe 
+    content)</h4>
+    <ul>
+      <li><a onclick="googlewin.show(); return false" href="#">Show Window 1</a> 
+      </li>
+      <li><a onclick="googlewin.hide(); return false" href="#">Hide Window 1</a> 
+      </li>
+      <li>
+      <a onclick="googlewin.load('iframe', 'http://www.cssdrive.com', 'CSS Drive'); return false" href="#">
+      Change Window's URL to CSS Drive</a> 
+      </li>
+      <li><a onclick="googlewin.setSize(800, 500); return false" href="#">Resize 
+      Window to 800px by 600px</a></li>
+    </ul>
+    <h4 style="font-size: 14px; background-color: #E1EFAF">Window 2 (inline content)</h4>
+    <ul>
+    <li><a href="#" onClick="inlinewin.show(); return false">Show Window 2</a></li>
+      <li>
+      <a onclick="inlinewin.load('inline', 'The content in this window has changed!', 'New Broadcast Title'); return false" href="#">
+      Change Inline content for Window 2</a> 
+      </li>
+      <li><a onclick="inlinewin.moveTo(400, 200); return false" href="#">Move 
+      Window 2</a> </li>
+    </ul>
+    </td>
+    <td valign="top" width="50%">
+    <h4 style="font-size: 14px; background-color: #E1EFAF">Window 3 (Ajax content)</h4>
+    <ul>
+      <li><b><a onclick="openmypage(); return false" href="#">Create/ Open 
+      Window 3</a></b></li>
+      <li>
+      <a onclick="if (window.ajaxwin) ajaxwin.moveTo('middle', 'middle'); return false" href="#">
+      Center Window 3</a> 
+      </li>
+      <li>
+      <a onclick="if (window.ajaxwin) ajaxwin.load('ajax', 'windowfiles/external2.htm', 'New Ajax Page'); return false" href="#">
+      Load another page's content in Window 3</a> 
+      </li>
+      <li><a onclick="if (window.ajaxwin) ajaxwin.show(); return false" href="#">Show Window 3</a></li>
+    </ul>
+    <h4 style="font-size: 14px; background-color: #E1EFAF">Window 4 (Content from a DIV on the page)</h4>
+    <ul>
+      <li>
+      <a onclick="divwin=dhtmlwindow.open('divbox', 'div', 'somediv', '#4: DIV Window Title', 'width=450px,height=300px,left=200px,top=150px,resize=1,scrolling=1'); return false" href="#">
+      <b>Create/ Open Window 4</b></a> 
+      </li>
+      <li><a onclick="if (window.divwin) divwin.isResize(false); return false" href="#">Disable 
+      Window 4 Resize</a> 
+      </li>
+      <li><a onclick="if (window.divwin) divwin.isScrolling(false); return false" href="#">Disable 
+      Window 4 Scrollbars</a> 
+      </li>
+      <li><a onclick="if (window.divwin) divwin.show(); return false" href="#">Show Window 4</a> 
+      </li>
+    </ul>
+    </td>
+  </tr>
+</table>
+    <hr size="1">
+    <p align="left"><strong>Directions: 
+    <a target="win2" href="dhtmlwindow_dev.htm"> 
+    <img border="0" src="../../dview.gif" width="115" height="19"></a> </strong></p>
+      <p align="left">To add DHTML Window widget to your page, just download 
+      &quot;<a href="dhtmlwindow.zip">dhtmlwindow.zip</a>&quot;:</p>
+<ul>
+  <li>
+  <span style="font-size: 110%"><b><a href="dhtmlwindow.zip">dhtmlwindow.zip</a></b></span> (consists 
+of the below files):<ul style="list-style-type: decimal">
+  <li>
+  <a href="demo.htm">demo.htm</a></li>
+  <li>
+  windowfiles/<a href="windowfiles/dhtmlwindow.css">dhtmlwindow.css</a></li>
+  <li>
+  windowfiles/<a href="windowfiles/dhtmlwindow.js">dhtmlwindow.js</a></li>
+  <li>
+  windowfiles/
+  min.gif, close.gif, restore.gif, resize.gif</li>
+</ul>
+</li>
+</ul>
+<p>Inside <a href="demo.htm">demo.htm</a>, you'll find the 4 DHTML window demos 
+shown on this page above. View the page's source to see the 
+syntax in each case.</p>
+      <h3 align="left"><u>For your Information</u></h3>
+      <p align="left">There's very little editing required to the script files 
+      themselves. Near the top inside dhtmlwindow.js, you can change the paths 
+      to the four images used by the script's window interface depending on 
+      where they are located. The file dhtmlwindow.css controls the basic look 
+      of the windows (ie: font and handle bar colors), with any changes 
+      optional. With that out of the way, below describes the stages to adding/ using DHTML 
+      Window widget on your pages.</p>
+<p align="left"><b>Stage 1:</b> Add the window widget code references to the top 
+of your page:</p>
+<p class="codehighlight" align="left">&lt;link rel=&quot;stylesheet&quot; 
+href=&quot;windowfiles/dhtmlwindow.css&quot; type=&quot;text/css&quot; /&gt;<br>
+<br>
+&lt;script type=&quot;text/javascript&quot; src=&quot;windowfiles/dhtmlwindow.js&quot;&gt;<br>
+<br>
+/***********************************************<br>
+* DHTML Window Widget- © Dynamic Drive (www.dynamicdrive.com)<br>
+* This notice must stay intact for legal use.<br>
+* Visit http://www.dynamicdrive.com/ for full source code<br>
+***********************************************/<br>
+<br>
+&lt;/script&gt;</p>
+<p align="left"><b>Stage 2:</b> You're now ready to open a DHTML window on your 
+page. The function to call on your page is:</p>
+<p style="font-size: 110%" class="codehighlight" align="left"><b>var 
+uniquevar=dhtmlwindow.open(uniqueID, contenttype, contentsource, title, 
+attributes, [recalonload])</b></p>
+<p align="left">Here are two examples, one opening a DHTML window automatically 
+as the page loads, the other, when the user clicks on a link:</p>
+<p class="codehighlight" align="left">&lt;script type=&quot;text/javascript&quot;&gt;<br>
+var googlewin=dhtmlwindow.open(&quot;googlebox&quot;, &quot;iframe&quot;, &quot;http://google.com&quot;, 
+&quot;Google Web site&quot;, &quot;width=700px,height=450px,resize=1,scrolling=1,center=1&quot;, 
+&quot;<font color="#FF0000">recal</font>&quot;)<br>
+&lt;/script&gt;</p>
+<p class="codehighlight" align="left">&lt;a href=&quot;#&quot; 
+onClick=&quot;ajaxwin=dhtmlwindow.open('ajaxbox', 'ajax', 'external.htm', 'Ajax Win 
+Title', 'width=650px,height=400px,left=300px,top=100px,resize=0,scrolling=1'); 
+return false&quot;&gt;Create/ Open Ajax Window&lt;/a&gt;</p>
+<p align="left">Notice the &quot;recal&quot; parameter at the end that's defined in the 
+first example and not the second. More on this later. Below describes what each parameter of <code>dhtmlwindow.open()</code> 
+does:</p>
+<ul>
+  <li>
+  <p align="left"><b>uniquevar:</b> Whenever you call <code>dhtmlwindow.open()</code> 
+  the first time to create and open a new window, you should assign it to an 
+  arbitrary but unique variable. It is through this variable that you can later 
+  invoke additional methods to manipulate the opened window.</p></li>
+  <li>
+  <p align="left"><b>uniqueID:</b> The first parameter of <code>dhtmlwindow.open()</code>, 
+  this should be an arbitrary but unique ID, used by the script to 
+  create the &quot;ID&quot; attribute of the window's primary DIV container.</p></li>
+  <li>
+  <p align="left"><b><a name="loadparam"></a>contenttype:</b> This parameter tells the script the 
+  content type you'll be loading into the window. The four valid values are: &quot;<code>iframe</code>&quot;, 
+  &quot;<code>inline</code>&quot;, &quot;<code>ajax</code>&quot;, or &quot;<code>div</code>&quot;. 
+  See the next parameter for more info.</p></li>
+  <li>
+  <p align="left"><b>contentsource:</b> This parameter specifies the content 
+  itself to show inside the window, and varies depending on the former &quot;<code>contenttype</code>&quot; 
+  parameter.</p>
+  <ol>
+    <li>
+    For &quot;<code>iframe</code>&quot; content, specify the URL to the page in 
+  question (ie: &quot;http://www.google.com&quot;).</li>
+    <li>
+    For &quot;<code>inline</code>&quot; content, 
+  specify the complete HTML you wish to show, though remember to backslash any 
+  special JavaScript characters such as apostrophes (ie: &quot;&lt;b&gt;I\'m the window 
+  content to show&lt;/b&gt;&quot;).</li>
+    <li>
+    For &quot;<code>ajax</code>&quot; content, specify the relative 
+  path to the external page on <b>your</b> site from the current page to show (ie: 
+  &quot;../external.htm&quot;). </li>
+    <li>
+    And finally, for &quot;<code>div</code>&quot; content, first, define a DIV on the 
+    page with a unique ID attribute and probably hidden (using <code>style=&quot;display:none&quot;</code>), 
+    then, use the DIV's id (ie: &quot;mydiv&quot;) as the 
+    parameter;s value.</li>
+</ol>
+  </li>
+  <li><p>
+  <b>title:</b> Arbitrary text that will be shown as the 
+  title of the window.</p></li>
+  <li><p>
+  <b>attributes:</b> Set this 
+  parameter to toggle the various display attributes of the window when it's 
+  created, such as its dimensions, position on the page etc. Separate each 
+  attribute with a comma (,). Here they are in full force:<br>
+&nbsp;<table border="1" width="450" cellspacing="0" cellpadding="2">
+    <tr>
+      <td width="30%" bgcolor="#D8EA99"><b>Attribute</b></td>
+      <td width="70%" bgcolor="#D8EA99"><b>Description</b></td>
+    </tr>
+    <tr>
+      <td width="30%">width=600px</td>
+      <td width="70%">Width of the window, in px.</td>
+    </tr>
+    <tr>
+      <td width="30%">height=450px</td>
+      <td width="70%">Height of the window, in px.</td>
+    </tr>
+    <tr>
+      <td width="30%">left=30px</td>
+      <td width="70%">Horizontal position of the window <b>relative</b> to the window 
+      viewpoint (left/top edge of the visible window).</td>
+    </tr>
+    <tr>
+      <td width="30%">top=100px</td>
+      <td width="70%">Vertical position of the window <b>relative</b> to the window 
+      viewpoint.</td>
+    </tr>
+    <tr>
+      <td width="30%">center=1|0</td>
+      <td width="70%">Sets whether window should be centered on the page. If 
+      defined supersedes the left/top attributes above. 1=yes, 0=no.</td>
+    </tr>
+    <tr>
+      <td width="30%">resize=1|0</td>
+      <td width="70%">Sets whether window should be resizable. 1=yes, 0=no.</td>
+    </tr>
+    <tr>
+      <td width="30%">scrolling=1|0</td>
+      <td width="70%">Sets whether window should contain scrollbars (when 
+      needed). 1=yes, 0=no.</td>
+    </tr>
+    <tr>
+      <td width="30%" valign="top"><font color="#FF0000">recal</font></td>
+      <td width="70%">This is an optional 
+  parameter that should only be used when you're opening up a DHTML window 
+  automatically as the page is loading (versus clicking on a link for 
+  example). By defining and setting this parameter to a value of &quot;<code>recal</code>&quot;, 
+  the script will reposition the DHTML window after the document has fully 
+  loaded to take into account any scrolling of the document that might have 
+  occured prior.</td>
+    </tr>
+  </table><br>
+  Remember to separate each attribute with a comma. All of them are optional, 
+  though you should at least declare the width/height attributes for a 
+  presentable window to be created:<p class="codehighlight" align="left" style="margin-bottom: 1em">&quot;width=450px,height=200px,center=1,scrolling=1&quot;</p>
+ </li>
+</ul>
+<p align="left"><b>Stage 3:</b> Learning how to open a window is just half the 
+fun. Once it's open, you can continue to manipulate it, such as change the 
+content loaded when a link is clicked, resize or hide it dynamically etc. Recall 
+that when you open a new DHTML window, you should define an arbitrary/unique variable 
+to contain the result:</p>
+<p class="codehighlight" align="left">var <b>googlewin</b>=dhtmlwindow.open(&quot;googlebox&quot;, &quot;iframe&quot;, &quot;http://google.com&quot;, 
+&quot;Google Web site&quot;, &quot;width=700px,height=450px,resize=1,scrolling=1,center=1&quot;, 
+&quot;<font color="#FF0000">recal</font>&quot;)<br>
+<br>
+//OR<br>
+<br>
+&lt;a href=&quot;#&quot; onClick=&quot;<b>yahoowin</b>=dhtmlwindow.open('yahoo', 'iframe', 
+'http://yahoo.com', 'Yahoo', 'width=500px,height=300px,center=1'); return 
+false&quot;&gt;Show Yahoo&lt;/a&gt;</p>
+<p align="left">It is via this unique variable for each window created that 
+enables you to continue to reference the window and modify it later using a 
+handful or window methods. For example, to hide a window dynamically, you would 
+call &quot;<code>googlewin.hide()</code>&quot;. Below lists these methods.</p>
+  <table border="1" width="95%" cellspacing="0" cellpadding="2">
+    <tr>
+      <td width="25%" bgcolor="#D8EA99"><b>Method</b></td>
+      <td width="75%" bgcolor="#D8EA99"><b>Description</b></td>
+    </tr>
+    <tr>
+      <td width="25%">show()</td>
+      <td width="75%">Call this method to explicitly show a window. Useful if 
+      it's been hidden (but <b>not</b> closed).</td>
+    </tr>
+    <tr>
+      <td width="25%">hide()</td>
+      <td width="75%">Call this method to explicitly hide a window. The window 
+		is not visible, but the contents of the window remains.</td>
+    </tr>
+    <tr>
+      <td width="25%" valign="top">close()</td>
+      <td width="75%">Call this method to explicitly close a window. Contents 
+		inside the DHTML window is emptied. In order to revive this window 
+		again, you will need to call <code>dhtmlwindow.open()</code> again with 
+		the same parameters used to create the window initially.</td>
+    </tr>
+    <tr>
+      <td width="25%">setSize(w, h)</td>
+      <td width="75%">Resizes the window to the desired dimensions. Enter two 
+      integers, with the px unit implied: <code>setSize(500, 600)</code></td>
+    </tr>
+    <tr>
+      <td width="25%">moveTo(x, y)</td>
+      <td width="75%">Moves the window to the desired coordinates on the page, 
+      relative to the viewpoint. Enter two integers, with the px unit implied:
+      <code>moveTo(10, 50)</code>. A special keyword &quot;middle&quot; can be used for 
+      either the &quot;x&quot; or &quot;y&quot; parameter to center the window in that direction:
+      <code>moveTo(&quot;middle&quot;, 50)</code>.</td>
+    </tr>
+    <tr>
+      <td width="25%" valign="top">load(contenttype, contentsource, title)</td>
+      <td width="75%">Updates a window with new content. The parameters for
+      <code>load()</code> are identical to its <a href="#loadparam">counterparts</a> 
+      found in <code>dhtmlwindow.open()</code>. A few examples:<p class="codehighlight">
+      googlewin.load(&quot;iframe&quot;, &quot;http://cssdrive.com&quot;, &quot;CSS Drive&quot;)<br>
+      wininstance2.load(&quot;inline&quot;, &quot;New window content here!&quot;, &quot;New title&quot;)<br>
+      wininstance3.load(&quot;ajax&quot;, &quot;external.htm&quot;, &quot;Ajax Window title&quot;)<br>
+      wininstance4.load(&quot;div&quot;, &quot;faqdiv&quot;, &quot;Div Window title&quot;)</p>
+      <p>A word of caution- In general you should stick to the same content type 
+      when changing a window's content. For example, if your window originally 
+      contained &quot;<code>iframe</code>&quot; content, you should only update it with 
+      new iframe content and not content of a different type. With certain 
+      combinations it may generate an error in Firefox.</td>
+    </tr>
+    <tr>
+      <td width="25%">isResize(true/false)</td>
+      <td width="75%">Sets whether window should be resizable. 1=yes, 0=no.</td>
+    </tr>
+    <tr>
+      <td width="25%">isScrolling(true/false)</td>
+      <td width="75%">Sets whether window should contain scrollbars (when 
+      needed). 1=yes, 0=no.</td>
+    </tr>
+    <tr>
+      <td width="25%" valign="top"><font color="#FF0000">onclose=function(){<br>
+      //your code here<br>
+      }</font></td>
+      <td width="75%">A custom event handler that executes your desired code 
+      whenever the window is being closed. By returning false, you can cancel 
+      that action of closing the window. Here's an example that asks the user 
+      for confirmation when he/she attempts to close a window:<p class="codehighlight">
+      googlewin.onclose=function(){<br>
+      //returns false if user clicks on &quot;No&quot; button:<br>
+      var returnval=confirm(&quot;You are about to close this window. Are you sure?&quot;)<br>
+      return returnval<br>
+      }</td>
+    </tr>
+    </table>
+      <p align="left">As a reminder, these methods are called on top of the 
+      window's unique variable name you've assigned it at time of creation. Lets 
+      see a couple of examples:</p>
+      <p class="codehighlight" align="left"><b>&lt;!-- Create links that manipulate 
+      an opened window in various ways when clicked on --&gt;</b><br>
+      <br>
+      &lt;script type=&quot;text/javascript&quot;&gt;<br>
+var googlewin=dhtmlwindow.open(&quot;googlebox&quot;, &quot;iframe&quot;, &quot;http://google.com&quot;, 
+&quot;Google Web site&quot;, &quot;width=700px,height=450px,resize=1,scrolling=1,center=1&quot;, 
+      &quot;<font color="#FF0000">recal</font>&quot;)<br>
+      &lt;/script&gt;<br>
+      <br>
+      &lt;a href=&quot;#&quot; onClick=&quot;googlewin.load('iframe', 'http://cssdrive.com', 'CSS 
+      Drive'); return false&quot;&gt;Load new site into window&lt;/a&gt;<br>
+      &lt;a href=&quot;#&quot; onClick=&quot;googlewin.moveTo('middle', 'middle'); return 
+      false&quot;&gt;Center Window&lt;/a&gt;<br>
+      &lt;a href=&quot;#&quot; onClick=&quot;googlewin.hide(); return false&quot;&gt;Hide 
+      Window&lt;/a&gt;<br>
+		&lt;a href=&quot;#&quot; onClick=&quot;googlewin.close(); return false&quot;&gt;Close 
+      Window&lt;/a&gt;</p>
+      <p class="codehighlight" align="left"><b>&lt;!-- Define a function to 
+      create/open a DHTML window plus manipulate it further when a link is 
+      clicked on --&gt;<br>
+      </b><br>
+      &lt;script type=&quot;text/javascript&quot;&gt;<br>
+      function openmypage(){ //Define arbitrary function to run desired DHTML 
+      Window widget codes<br>
+      ajaxwin=dhtmlwindow.open(&quot;ajaxbox&quot;, &quot;ajax&quot;, &quot;volunteer.htm&quot;, &quot;Ajax Window 
+      Title&quot;, 
+      &quot;width=650px,height=400px,left=300px,top=100px,resize=1,scrolling=1&quot;)<br>
+      <font color="#FF0000">ajaxwin.onclose=function(){ //Run custom code when window is about to be 
+      closed<br>
+      return window.confirm(&quot;Close this window?&quot;)<br>
+      } </font> <br>
+      }<br>
+      &lt;/script&gt;<br>
+      <br>
+      &lt;a href=&quot;#&quot; onClick=&quot;openmypage(); return false&quot;&gt;Open the page 
+      &quot;volunteer.htm&quot; in a DHTML window&lt;/a&gt;</p>
+      <p align="left">All this may seem a little daunting, but it really isn't. 
+      We have a habit of being thorough. Once you understand the simple relationship between a newly 
+      created DHTML window, it's unique variable, and the methods this variable has access 
+      to, you can call and modify your DHTML windows in a myriad of ways. Don't forget to refer to <a href="demo.htm">demo.htm</a> 
+      to see a more complete list of examples of launching and manipulating 
+      DHTML windows using this widget.</p>
+<p align="left">Move over popup windows, there's a new kid in town!</p>
+    
+<div id="cjfooterad" style="border-top:1px dashed gray; padding-top:1em;">
+
+
+<div>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- DD 728 x 90 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-7051847089736268"
+     data-ad-slot="3413554237"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+</div>
+
+</div></td>
+  </tr>
+</table>
+
+
+<div id="footer">
+<a href="#top" onClick="dd_scrolltotop(); return false"><img src="http://www.dynamicdrive.com/ddincludes/jumptop.png" style="position:absolute;right:5px; bottom: 7px; border-width:0" title="Jump to Top" /></a>
+<div id="subfooter">
+<div id="subfooter-left"><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=a5e67ec6024feb24f1f5a78ee33fe991&_render=rss"><img src="http://www.dynamicdrive.com/ddincludes/rss.png" title="New Content- RSS feed" /></a> <a href="http://twitter.com/ddrivegeorge"><img src="http://www.dynamicdrive.com/ddincludes/twitter-2.png" title="Dynamic Drive Twitter Account" /></a></div> 
+<div id="subfooter-center"><div class="drop-shadow curled">
+<div style="margin:auto; text-align:center">
+
+Copyright 2015 (c) Dynamic Drive. All rights reserved.
+
+</div>
+</div></div>
+<div id="subfooter-right">
+
+</div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-55377-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+
+</body>
+
+</html>
